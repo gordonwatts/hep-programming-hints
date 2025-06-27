@@ -84,7 +84,7 @@ Use nested `Select` calls to retain event structure, retrieving jet properties a
 # For each event, get a list of jets and select each jet's pt and eta
 source = FuncADLQueryPHYSLITE()
 jets_per_event = source.Select(lambda e: e.Jets())
-jets_pt_eta = jets_per_event.Select(lambda jets: 
+query = jets_per_event.Select(lambda jets: 
     {
         "pt": jets.Select(lambda j: j.pt()),
         "eta": jets.Select(lambda j: j.eta())
@@ -99,7 +99,7 @@ Use the `Where` operator to filter objects by a condition. For example, to selec
 
 ```python
 # Select eta of jets with pt > 30 GeV
-result = (FuncADLQueryPHYSLITE()
+query = (FuncADLQueryPHYSLITE()
     .SelectMany(lambda e: e.Jets())
     .Where(lambda j: j.pt() / 1000.0 > 30.0)
     .Select(lambda j: {'pt': j.eta()})
@@ -114,7 +114,7 @@ You can filter entire events based on conditions on contained objects using `.Wh
 
 ```python
 # Filter events that have >=2 jets with pt > 30 GeV, then get number of jets in those events
-result = (FuncADLQueryPHYSLITE()
+query = (FuncADLQueryPHYSLITE()
     .Where(lambda e: e.Jets()
                       .Where(lambda j: j.pt() / 1000.0 > 30.0)
                       .Count() >= 2)
@@ -130,14 +130,15 @@ FuncADL queries can return multiple collections simultaneously. For example, to 
 
 ```python
 # Select electron and muon collections, then pick their pt and eta
-result = ServiceXSourceXAOD(dataset) \
-    .Select('lambda e: (e.Electrons("Electrons"), e.Muons("Muons"))') \
-    .Select('lambda pairs: (pairs[0].Select(lambda ele: ele.pt()), \
-                             pairs[0].Select(lambda ele: ele.eta()), \
-                             pairs[1].Select(lambda mu: mu.pt()), \
-                             pairs[1].Select(lambda mu: mu.eta()))') \
-    .AsAwkwardArray(('ElePt','EleEta','MuPt','MuEta')) \
-    .value()
+query = (FuncADLQueryPHYSLITE() \
+    .Select(lambda e: (e.Electrons("Electrons"), e.Muons("Muons")))
+    .Select(lambda pairs: {
+        'ele_pt':  pairs[0].Select(lambda ele: ele.pt()),
+        'ele_eta': pairs[0].Select(lambda ele: ele.eta())
+        'mu_pt': pairs[1].Select(lambda mu: mu.pt()),
+        'mu_eta': pairs[1].Select(lambda mu: mu.eta())
+    })
+)
 ```
 
 *Here `pairs[0]` and `pairs[1]` refer to the Electron and Muon lists respectively. The result contains four Awkward Array fields: electron $p_T$, electron $\eta$, muon $p_T$, muon $\eta$ for each event.*
@@ -148,30 +149,13 @@ You can compute derived quantities on the fly by using nested `Select` operation
 
 ```python
 # For events with any jets >30 GeV, compute eta*phi for each electron
-result = ServiceXSourceXAOD(dataset) \
-    .Where('lambda e: e.Jets("AntiKt4EMTopoJets") \
-                  .Where(lambda j: j.pt()/1000.0 > 30.0).Count() > 0') \
-    .Select('lambda e: e.Electrons("Electrons").Select(lambda ele: ele.eta() * ele.phi())') \
-    .AsAwkwardArray('EleEtaPhiProd') \
-    .value()
+query = (FuncADLQueryPHYSLITE()
+    .Where(lambda e: 
+        e.Jets("AntiKt4EMTopoJets")
+         .Where(lambda j: j.pt()/1000.0 > 30.0).Count() > 0')
+    .Select(lambda e: e.Electrons("Electrons")
+                       .Select(lambda ele: ele.eta() * ele.phi()))
+)
 ```
 
 *This filters events (at least one jet $>30$ GeV) and then produces a new electron-level variable **EleEtaPhiProd** = $\eta \times \phi$. The inner `Select` computes the expression for each electron in the event.*
-
-## Retrieving and Using Query Results
-
-**Direct Awkward Array Output:** When using `.AsAwkwardArray(...).value()`, the query execution returns an Awkward Array in memory (no manual file handling needed). You can use this `result` array directly for analysis with Awkward/Pandas/NumPy operations.
-
-**Using Delivered Files:** The `deliver()` function submits the request and returns file paths (e.g. Parquet or ROOT files) containing the data. You can load these into an Awkward Array manually. For example, if the output is a ROOT TTree:
-
-```python
-files_dict = deliver(spec)         # submit request, get dict of sample -> file list:contentReference[oaicite:15]{index=15}
-file_list = files_dict["sample_name"]  # e.g. use your sample key
-import uproot
-import awkward as ak
-# Load all files and concatenate into one Awkward array
-arrays = [uproot.open(f)[<tree_name>].arrays(library="ak") for f in file_list]
-result_array = ak.concatenate(arrays, axis=0)
-```
-
-*This opens each delivered file (replace `<tree_name>` with the actual TTree name) and uses Uproot to obtain an Awkward Array. The individual arrays are concatenated along axis 0 to form the final result for downstream analysis.*
