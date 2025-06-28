@@ -17,6 +17,10 @@ print(flat_level1)  # [0, 1, 2, 3, 4, 5, 6, 7]
 print(flat_all)     # [0, 1, 2, 3, 4, 5, 6, 7]  (same here because only one level)
 ```
 
+Notes:
+
+- If a variable has no array structure, then `ak.flatten` will cause an error.
+
 ## Combining Multiple Fields into Records
 
 Use **`ak.zip`** to join parallel arrays into an array of records (structured data). The `ak.zip` function can combine arrays of equal length into one record per entry. For example, zipping an age array and a name array yields an array of records with fields `"age"` and `"name"`:

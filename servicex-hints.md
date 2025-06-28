@@ -74,6 +74,10 @@ query = FuncADLQueryPHYS() \
     .Select(lambda j: {"pt": j.pt() / 1000.0'})
 ```
 
+Notes:
+
+- If you have flattened a variable like this, you'll get an unnested array.
+
 *(The above returns an Awkward Array of jet $p_T$ values under the key `pt`.)*
 
 ## Selecting Nested Data per Event (Jets per Event)
