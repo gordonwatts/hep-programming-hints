@@ -163,3 +163,20 @@ query = (FuncADLQueryPHYSLITE()
 ```
 
 *This filters events (at least one jet $>30$ GeV) and then produces a new electron-level variable **EleEtaPhiProd** = $\eta \times \phi$. The inner `Select` computes the expression for each electron in the event.*
+
+## Getting the First Object in a Sequence
+
+Sometimes one needs the first object in a sequence. For example, to get the first jet in the event:
+
+```python
+query = (FuncADLQueryPHYSLITE()
+    .Select(lambda e: {'first_jet_pt': e.Jets().First().pt()}))
+```
+
+Note that if there are no jets, then this will crash - so if there might be zero in the sequence, protect with a count:
+
+```python
+query = (FuncADLQueryPHYSLITE()
+    .Where(lambda e: e.Jets().Count() > 0)
+    .Select(lambda e: {'first_jet_pt': e.Jets().First().pt()}))
+```
