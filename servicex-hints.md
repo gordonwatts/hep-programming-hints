@@ -48,7 +48,7 @@ all_jet_pts = to_awk(
 
 ## The `deliver` function
 
-* Leave `NFiles` out to run on the full dataset, but usually start with 1 for testing.
+* Leave `NFiles` out to run on the full dataset, but start with 1 for testing. Only change it to something else if there is a good reason (and please explain that reason in your response to the user).
 * The query can be re-used.
 * Use `dataset.Rucio` for a `rucio` dataset, use `dataset.FileList` for a list of web accessible datasets (via `https` or `xrootd://`)
 
