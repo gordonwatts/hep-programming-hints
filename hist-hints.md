@@ -81,7 +81,7 @@ h_sig = histogram[:, "4j2b", "ttbar", "nominal"]
 ```python
 import matplotlib.pyplot as plt
 import mplhep as hep
-plt.style.use(hep.style.CMS)  # use a CMS-inspired style for HEP plots
+plt.style.use(hep.style.ATLAS)  # use a ATLAS-inspired style for HEP plots
 
 # Plot the 1D slice with filled histogram style
 h_sig.plot(histtype="fill", linewidth=1, edgecolor="gray", label="ttbar")
