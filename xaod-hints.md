@@ -149,11 +149,12 @@ def make_tool_accessor(
 
 Use this tool to get either a tag weight for b-or-charm tagging and to see if a jet is "tagged" for a particular working point.
 
-Valid operating points:
+Operating Point Info:
 
 * `FixedCutBEff_65`, `FixedCutBEff_70`, `FixedCutBEff_77`, `FixedCutBEff_85`, `FixedCutBEff_90`
 * [Further information for user](https://ftag.docs.cern.ch/recommendations/algs/r22-preliminary/#gn2v01-b-tagging)
 * By default choose the `FixedCutBEff_77` working point.
+* Make sure to let the user know if you choose an operating point in your text explanation.
 
 Make sure the `tool_name` is different if you need to define multiple tools (because user needs more than one operating point)! Name them something reasonable so the code makes sense!
 
