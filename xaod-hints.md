@@ -147,7 +147,7 @@ def make_tool_accessor(
 
 ### BTaggingSelectionTool
 
-Use this tool to get either a tag weight for b-or-charm tagging and to see if a jet is "tagged" for a particular working point.
+Use this tool to get either a tag weight/discriminant for b-or-charm tagging and to see if a jet is "tagged" for a particular working point.
 
 Operating Point Info:
 
