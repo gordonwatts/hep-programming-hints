@@ -145,9 +145,9 @@ def make_tool_accessor(
     return func_adl_callable(tool_callback)(tool_call)
 ```
 
-### BTaggingSelectionTool
+### BTaggingSelectionTool: getting jet b-tagging results
 
-Use this tool to get either a tag weight/discriminant for b-or-charm tagging and to see if a jet is "tagged" for a particular working point.
+Use this tool to get either a tag weight/discriminant for b-or-charm tagging and to see if a jet is "tagged" for a particular working point. These are provided by the FTAG group in ATLAS.
 
 Operating Point Info:
 
