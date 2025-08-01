@@ -17,7 +17,7 @@ Despite being only a single missing ET for the event, it is stored as a sequence
 ## xAOD Tool Access
 
 Lots of things have to be accessed by creating tools. The code below should be used directly to help
-define tools in the code:
+define tools in the code. This code must be copied into the code you are writing.
 
 ```python
 from dataclasses import dataclass
@@ -157,6 +157,8 @@ Operating Point Info:
 * Make sure to let the user know if you choose an operating point in your text explanation.
 
 Make sure the `tool_name` is different if you need to define multiple tools (because user needs more than one operating point)! Name them something reasonable so the code makes sense!
+
+Make sure to copy in the code block in the section above `xAOD Tool Access`.
 
 ```python
 # Define the tool
