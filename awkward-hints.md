@@ -85,6 +85,24 @@ print(ak.to_list(sorted_array))
 
 You can specify `ascending=False` to sort in descending order, or provide an `axis` if you need to sort at a higher level of nesting.
 
+## Filtering sublists with `argmin` and `argmax` and friends
+
+Since `axis=0` is event lists, we often want to operated on the jagged arrays, e.g., `axis=1`. `argmin` and `argmax` are great for this, for example, when looking for two objects close to each other. However, `argmin` and `argmax` don't operate on `axis=1` (or deeper) the same way as `np.argmin` and `np.argmax` - and nor does the slicing.
+
+Instead, we need to use lists. For example:
+
+```python
+import awkward as ak
+
+array = ak.Array([[7, 5, 7], [], [2], [8, 2]])
+max_values = ak.argmax(array, axis=1, keepdims=True)
+print(max_values) # prints out "[[0], [None], [0], [0]]"
+print(array[max_values]) # prints out "[[7], [None], [2], [8]]"
+print(ak.flatten(array[max_values])) # prints out "[7, None, 2, 8]"
+```
+
+Note the `keepdims=True` - that makes sure you get that nested list, "[[0], [None], [0], [0]]", which can be correctly used for slicing. The result of the `ak.flatten` ("[7, None, 2, 8]") is probably the thing one wants most often. This is tricky, make sure to think through use of `argmax` and `argmin` when using them when not on `axis=0`.
+
 ## Reducing Values in Nested Arrays (Sum, etc.)
 
 Awkward Array supports reductions (like sum, min, max, etc.) over specified axes. For example, **`ak.sum`** can sum numbers across different dimensions:
@@ -174,6 +192,8 @@ print(ak.to_list(points1.distance(points2)))  # distance between all correspondi
 
 In this snippet, we created a `Point` class for individual records and a `PointArray` for arrays of those records, then registered them under the `"point"` key in `ak.behavior`. This allows calling `distance` on either a single record or an array of records. (Note: If an array was created *before* the behavior was registered, you may need to recreate it via `ak.Array(old_array)` to re-instantiate with the new behavior.)
 
+Note that it was possible to add extra fields to a record with the `Momentum3D` (or any other) behavior. `Momentum3D` will ignore the extra fields, and we can reference them normally. This prevents having to make lots of nested records for a single object (e.g. a jet 4-vector with properties like JVT (Jet Vertex Fraction)).
+
 ## Adding a New Field to Records
 
 To add a new field to an existing record-type Awkward Array, you can use **`ak.with_field`**. This function returns a new array with the additional field (it does not modify in-place). For example, let's add a field `"z"` to each record in an array:
@@ -193,7 +213,7 @@ Under the hood, `ak.with_field` can take any array-like as the new field (`what`
 
 ## Constructing and Using Lorentz Vectors (Physics Example)
 
-Awkward Array integrates with the [Vector](https://github.com/scikit-hep/vector) library to handle 2D/3D/4D vectors in a physics context. To represent Lorentz vectors (four-momentum with energy), we create an Awkward record array with fields like `"px"`, `"py"`, `"pz"`, `"E"` and assign it a record name `"Momentum4D"` (a name recognized by the Vector library behaviors). We must also ensure the Vector behaviors are registered in Awkward.
+Awkward Array integrates with the [Vector](https://github.com/scikit-hep/vector) library to handle 2D/3D/4D vectors in a physics context using behaviors. To represent Lorentz vectors (four-momentum with energy), we create an Awkward record array with fields like `"px"`, `"py"`, `"pz"`, `"E"` and assign it a record name `"Momentum4D"` (a name recognized by the Vector library behaviors). We must also ensure the Vector behaviors are registered in Awkward.
 
 First, register vector behaviors and construct the array of vectors:
 
@@ -268,6 +288,10 @@ print(ak.to_list(pair_energies))
 ```
 
 In this snippet, `ak.combinations(array, 2, fields=[...])` produced an array of records with two fields (`p1` and `p2`) for each pair. We then utilized vectorized field access (`pairs.p1.energy`) and arithmetic to get the combined energy of each pair.
+
+## Numpy Operations that *just work*
+
+`numpy` has a dispatch mechanism which allows some `numpy` functions to work on awkward arrays. For example, `np.stack` works as expected on awkward arrays.
 
 ---
 

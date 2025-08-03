@@ -22,6 +22,8 @@ define tools in the code. This code must be copied into the code you are writing
 ```python
 from dataclasses import dataclass
 from typing import Callable, Iterable, List, Optional
+from func_adl import ObjectStream
+from func_adl import func_adl_callable
 
 T = TypeVar("T")
 
@@ -161,6 +163,9 @@ Make sure the `tool_name` is different if you need to define multiple tools (bec
 Make sure to copy in the code block in the section above `xAOD Tool Access`.
 
 ```python
+# Specific for the below code
+from func_adl_servicex_xaodr25.xAOD.jet_v1 import Jet_v1
+
 # Define the tool
 query_base, tag_tool_info = make_a_tool(
     physlite,
@@ -173,7 +178,7 @@ query_base, tag_tool_info = make_a_tool(
     ],
 )
 
-# If you need the tag weight
+# If you need the tag weight. Tag weights, output of a GNN, are between -10 and 15.
 tag_weight = make_tool_accessor(
     tag_tool_info,
     function_name="tag_weight",
