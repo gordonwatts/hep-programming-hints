@@ -62,9 +62,9 @@ Queries have to start from a base, like `FuncADLQueryPHYSLITE`.
 * Use `FuncADLQueryPHYSLITE` for ATLAS PHYSLITE samples - that have already had calibrations, etc., applied.
 * Use `FuncADLQueryPHYS` for ATLAS PHYS or other derivations (like LLP1, etc.)
 
-The `base_query` is a sequence of events. Each event contains collections of objects like Jets and Electrons. `evt.Jets()` gets you the collection of jets for a particular event. You can pass `calibrated=False` to prevent calibration in `PHYS`, but note that `PHYSLITE` does not have uncalibrated jets (or other objects) in it!
+The `base_query` is a sequence of events. Each event contains collections of objects like Jets and Electrons. `evt.Jets()` gets you the collection of jets for a particular event. You can pass `calibrated=False` to prevent calibration in `PHYS`, but note that `PHYSLITE` does not have uncalibrated jets (or other objects) in it! This `func_adl` language is based on LINQ.
 
-It is best practice to always end the query with a `Select` call that puts the data in a dictionary, as the dictionary keys become column labels.
+The query must end with a `Select` that creates a dictionary. Each element of the dictionary is a value, or a list of values. `func_adl` does not support nested objects of any sort: not even 2D arrays. Each element of the dictionary can be a value or a 1D list.
 
 ## Selecting a Flat Variable (Jet $p_T$)
 
@@ -78,7 +78,7 @@ query = FuncADLQueryPHYS() \
 
 Notes:
 
-- If you have flattened a variable like this, you'll get an unnested array.
+* If you have flattened a variable like this, you'll get an unnested array.
 
 *(The above returns an Awkward Array of jet $p_T$ values under the key `pt`.)*
 
@@ -103,13 +103,14 @@ You cannot nest the selection: the following will not work:
 # Example of what not to do
 source = FuncADLQueryPHYSLITE()
 jets_per_event = source.Select(lambda e: e.Jets())
-query = jets_per_event.Select(lambda jets: jets.Select(lambda j:
+query = jets_per_event.Select(lambda jets: jets.Select(lambda j:  # WILL NOT WORK
     {
         "pt": j.pt()/1000.0,  # WILL NOT WORK
         "eta": j: j.eta(),  # WILL NOT WORK
     }))
 ```
 
+Nor can you have nested dictionaries.
 
 *Each event in the resulting Awkward Array has a list of events, each with a list of jet $p_T$ and $\eta$ values.*
 
