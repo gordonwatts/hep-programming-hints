@@ -92,12 +92,24 @@ source = FuncADLQueryPHYSLITE()
 jets_per_event = source.Select(lambda e: e.Jets())
 query = jets_per_event.Select(lambda jets: 
     {
-        "pt": jets.Select(lambda j: j.pt()),
+        "pt": jets.Select(lambda j: j.pt()/1000.0),
         "eta": jets.Select(lambda j: j.eta())
     })
 ```
 
-You cannot nest the selection - that is, you must have that interior `Select(lambda j: j.pt())`. This is a limitation of `func_adl`.
+You cannot nest the selection: the following will not work:
+
+```python
+# Example of what not to do
+source = FuncADLQueryPHYSLITE()
+jets_per_event = source.Select(lambda e: e.Jets())
+query = jets_per_event.Select(lambda jets: jets.Select(lambda j:
+    {
+        "pt": j.pt()/1000.0,  # WILL NOT WORK
+        "eta": j: j.eta(),  # WILL NOT WORK
+    }))
+```
+
 
 *Each event in the resulting Awkward Array has a list of events, each with a list of jet $p_T$ and $\eta$ values.*
 
