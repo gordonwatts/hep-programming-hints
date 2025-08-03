@@ -4,6 +4,8 @@ Use ServiceX to fetch data from `rucio` datasets on the GRID, skimming out only 
 
 Fetching data is two steps. First, construct a query. Second, execute the query against a dataset.
 
+Important Note: Moving data out of ServiceX and into awkward arrays is expensive. If there is something you can do to reduce the amount of data out of ServiceX it is worth doing it. For example, if you know that you'll never use jets with less than 40 GeV, you can filter jets at the ServiceX level.
+
 ## A Simple Full Example
 
 This example fetches the jet $p_T$'s from a PHYSLITE formatted xAOD data sample stored by `rucio`.

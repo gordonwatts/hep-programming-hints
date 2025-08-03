@@ -2,6 +2,8 @@
 
 This document provides **code snippets** demonstrating complex operations using the Awkward Array 2.x library, with applications to typical High Energy Physics (HEP) analysis tasks. Each snippet is preceded by a short comment describing the operation, followed by a Python code example. These examples cover advanced usage patterns (beyond trivial array creation or slicing) to help an LLM or developer compose solutions to real-world problems. The Awkward Array library is typically used alongside NumPy and integrates with tools like the **Vector** library for physics vectors, as shown below.
 
+As a general theme - it is always better to filter data early rather than wait until the last minute. The sooner you can apply a cut, the smaller the data you have to work with downstream, and the more can fit into core memory.
+
 ## Flattening Nested Arrays
 
 Use **`ak.flatten`** to reduce nested list structure. By default, `ak.flatten(array)` removes one level of nesting (flattens along the first axis). Setting `axis=None` will completely flatten an array, erasing all nesting (turning it into 1D):
@@ -291,7 +293,8 @@ In this snippet, `ak.combinations(array, 2, fields=[...])` produced an array of 
 
 ## Numpy Operations that *just work*
 
-`numpy` has a dispatch mechanism which allows some `numpy` functions to work on awkward arrays. For example, `np.stack` works as expected on awkward arrays.
+- `numpy` has a dispatch mechanism which allows some `numpy` functions to work on awkward arrays.
+  - For example, `np.stack` works as expected on awkward arrays. `ak.stack` does not exist! And the rules for `np.stack` are the same for awkward arrays - you need a 2D array, not a jagged array (it can be awkward type, but it must be effectively 2D).
 
 ---
 
