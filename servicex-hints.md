@@ -97,6 +97,8 @@ query = jets_per_event.Select(lambda jets:
     })
 ```
 
+You cannot nest the selection - that is, you must have that interior `Select(lambda j: j.pt())`. This is a limitation of `func_adl`.
+
 *Each event in the resulting Awkward Array has a list of events, each with a list of jet $p_T$ and $\eta$ values.*
 
 ## Filtering Objects in a Query (Jet Cuts)
