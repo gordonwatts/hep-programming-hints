@@ -1,0 +1,19 @@
+# Requirements for the trijet analysis script
+# Core data analysis libraries
+numpy>=1.20.0
+awkward>=2.0.0
+vector>=1.0.0
+hist>=2.7.0
+
+# ServiceX and related tools
+servicex-analysis-utils>=1.0.0
+func-adl-servicex-xaodr25>=3.0.0
+servicex>=3.0.0
+
+# Plotting and visualization
+matplotlib>=3.5.0
+mplhep>=0.3.0
+
+# Additional dependencies that may be needed
+uproot>=5.0.0
+coffea>=2024.1.0
