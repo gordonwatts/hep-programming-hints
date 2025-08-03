@@ -135,7 +135,7 @@ import awkward as ak
 
 one = ak.Array([[1, 2, 3], [], [4, 5], [6]])
 two = ak.Array([["a", "b"], ["c"], ["d"], ["e", "f"]])
-pairs = ak.cartesian([one, two], axis=1)  # all combinations per event/list:contentReference[oaicite:27]{index=27}
+pairs = ak.cartesian([one, two],  axis=1)  # all combinations per event/list:contentReference[oaicite:27]{index=27}
 
 print(ak.to_list(pairs))
 # Output: [
@@ -290,6 +290,8 @@ print(ak.to_list(pair_energies))
 ```
 
 In this snippet, `ak.combinations(array, 2, fields=[...])` produced an array of records with two fields (`p1` and `p2`) for each pair. We then utilized vectorized field access (`pairs.p1.energy`) and arithmetic to get the combined energy of each pair.
+
+Always use the `fields` argument to label the fields. It makes it much easier to understand what is going on later.
 
 ## Numpy Operations that *just work*
 
