@@ -103,7 +103,14 @@ print(array[max_values]) # prints out "[[7], [None], [2], [8]]"
 print(ak.flatten(array[max_values])) # prints out "[7, None, 2, 8]"
 ```
 
-Note the `keepdims=True` - that makes sure you get that nested list, "[[0], [None], [0], [0]]", which can be correctly used for slicing. The result of the `ak.flatten` ("[7, None, 2, 8]") is probably the thing one wants most often. This is tricky, make sure to think through use of `argmax` and `argmin` when using them when not on `axis=0`.
+Note the `keepdims=True` - that makes sure you get that nested list, "[[0], [None], [0], [0]]", which can be correctly used for slicing.
+
+Once you do the filtering you must:
+
+- Use `ak.flatten` to undo the downlevel caused by `keepdims=True`, or
+- Use `ak.first` to pick out the first in the sub list.
+
+Either of these will give you "[7, None, 2, 8]" in this example. But you *have* to do this for every item filtered by `max_values`!
 
 ## Reducing Values in Nested Arrays (Sum, etc.)
 
@@ -296,7 +303,8 @@ Always use the `fields` argument to label the fields. It makes it much easier to
 ## Numpy Operations that *just work*
 
 - `numpy` has a dispatch mechanism which allows some `numpy` functions to work on awkward arrays.
-  - For example, `np.stack` works as expected on awkward arrays. `ak.stack` does not exist! And the rules for `np.stack` are the same for awkward arrays - you need a 2D array, not a jagged array (it can be awkward type, but it must be effectively 2D).
+  - For example, `np.stack` works as expected on awkward arrays. And the rules for `np.stack` are the same for awkward arrays - you need a 2D array, not a jagged array (it can be awkward type, but it must be effectively 2D).
+- `ak.stack` does not exist and will cause an error!
 
 ---
 

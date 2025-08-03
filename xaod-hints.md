@@ -2,6 +2,8 @@
 
 Some hints to help with accessing xAOD objects.
 
+* All momentum, energy, and mass units are in MeV (e.g. `px, py, pz, E, m`). Unless asked otherwise, convert them to GeV by dividing by 1000 as early as possible.
+
 ## MissingET
 
 Access:
