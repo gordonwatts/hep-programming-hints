@@ -116,9 +116,9 @@ Either of these will give you "[7, None, 2, 8]" in this example. But you *have* 
 
 Awkward Array supports reductions (like sum, min, max, etc.) over specified axes. For example, **`ak.sum`** can sum numbers across different dimensions:
 
-* **Sum within each sublist:** Use `axis=1` (or `axis=-1` for the innermost axis) to sum each list of values independently.
-* **Sum across outer lists:** Use `axis=0` to sum element-wise across the outermost dimension.
-* **Total sum:** Use `axis=None` (or omit `axis`) to sum all elements into one scalar.
+- **Sum within each sublist:** Use `axis=1` (or `axis=-1` for the innermost axis) to sum each list of values independently.
+- **Sum across outer lists:** Use `axis=0` to sum element-wise across the outermost dimension.
+- **Total sum:** Use `axis=None` (or omit `axis`) to sum all elements into one scalar.
 
 ```python
 import awkward as ak
