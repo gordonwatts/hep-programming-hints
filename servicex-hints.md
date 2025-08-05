@@ -72,7 +72,7 @@ Use `SelectMany` to flatten jets across all events, then `Select` to get each je
 
 ```python
 query = FuncADLQueryPHYS() \
-    .SelectMany(lambda e: e.Jets("AntiKt4EMTopoJets")) \
+    .SelectMany(lambda e: e.Jets()) \
     .Select(lambda j: {"pt": j.pt() / 1000.0'})
 ```
 
@@ -152,7 +152,7 @@ FuncADL queries can return multiple collections simultaneously. For example, to 
 ```python
 # Select electron and muon collections, then pick their pt and eta
 query = (FuncADLQueryPHYSLITE() \
-    .Select(lambda e: (e.Electrons("Electrons"), e.Muons("Muons")))
+    .Select(lambda e: (e.Electrons(), e.Muons()))
     .Select(lambda pairs: {
         'ele_pt':  pairs[0].Select(lambda ele: ele.pt()),
         'ele_eta': pairs[0].Select(lambda ele: ele.eta())
@@ -174,7 +174,7 @@ query = (FuncADLQueryPHYSLITE()
     .Where(lambda e: 
         e.Jets("AntiKt4EMTopoJets")
          .Where(lambda j: j.pt()/1000.0 > 30.0).Count() > 0')
-    .Select(lambda e: e.Electrons("Electrons")
+    .Select(lambda e: e.Electrons()
                        .Select(lambda ele: ele.eta() * ele.phi()))
 )
 ```
