@@ -23,12 +23,16 @@ The `Reg` method creates a regular (uniform-width) binned axis for the histogram
 
 The `Var` method in the Hist API creates a variable-width binned axis for your histogram. Unlike .Reg, which makes bins of equal width, `Var` lets you specify the exact bin edges, so each bin can have a different width.
 
+Labels can contains `LaTeX` (and should for `eta` ($\eta$) and `pt` ($p_{T}$)). If you are using a f-string or `str.format(...)` that the curly LaTeX braces must be escaped.
+
 ## Filling a histogram with data
 
 ```python
 # Fill histogram using named axes
 h.fill(x=[3, 5, 2], y=[1, 4, 6])
 ```
+
+Note that `.fill` returns `None`.
 
 ## Viewing histogram counts and errors
 
@@ -90,6 +94,10 @@ plt.xlabel("Mass [GeV]")
 plt.show()
 ```
 
+Possible values for `histtype`: fill, step, errorbar, band, bar, barstep. Anything else will cause an error. By default use `fill`.
+
+Titles and axes labels can contains `LaTeX` (and should for `eta` ($\eta$) and `pt` ($p_{T}$)). If you are using a f-string or `str.format(...)` that the curly LaTeX braces must be escaped.
+
 ## Plotting a 2D histogram
 
 ```python
@@ -105,3 +113,5 @@ plt.show()
 ```python
 plt.savefig("histogram.png")
 ```
+
+You can also use `fig.savefig(...)`, of course, if you have the `fig` from making sub plots.
