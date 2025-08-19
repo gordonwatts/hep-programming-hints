@@ -50,7 +50,7 @@ all_jet_pts = to_awk(
 
 ## The `deliver` function
 
-* Leave `NFiles` out to run on the full dataset, but start with 1 for testing. Only change it to something else if there is a good reason (and please explain that reason in your response to the user).
+* Always use `NFiles=1` as above, even if the user asks otherwise. If they do, tell them they can run it themselves when they are ready!
 * The query can be re-used.
 * Use `dataset.Rucio` for a `rucio` dataset, use `dataset.FileList` for a list of web accessible datasets (via `https` or `xrootd://`)
 
@@ -64,7 +64,9 @@ Queries have to start from a base, like `FuncADLQueryPHYSLITE`.
 
 The `base_query` is a sequence of events. Each event contains collections of objects like Jets and Electrons. `evt.Jets()` gets you the collection of jets for a particular event. You can pass `calibrated=False` to prevent calibration in `PHYS`, but note that `PHYSLITE` does not have uncalibrated jets (or other objects) in it! This `func_adl` language is based on LINQ.
 
-The query must end with a `Select` that creates a dictionary. Each element of the dictionary is a value, or a list of values. `func_adl` does not support nested objects of any sort: not even 2D arrays. Each element of the dictionary can be a value or a 1D list.
+The last `Select` must create a dictionary (a `Where` can be after that `Select`). Each element of the dictionary is a value, or a list of values. `func_adl` does not support nested objects of any sort: not even 2D arrays. Each element of the dictionary can be a value or a 1D list. Do not try to fetch a list of muons, where each muon is `pt, eta, phi, E`. Instead, fetch `mu_pt, mu_eta, mu_phi, mu_E`.
+
+`ServiceX` queries can not contain references to `awkward` functions. Instead, use `Select`, `Where`, to effect the same operations.
 
 ## Selecting a Flat Variable (Jet $p_T$)
 

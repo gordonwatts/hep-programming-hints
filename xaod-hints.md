@@ -2,7 +2,32 @@
 
 Some hints to help with accessing xAOD objects.
 
-* All momentum, energy, and mass units are in MeV (e.g. `px, py, pz, E, m`). Unless asked otherwise, convert them to GeV by dividing by 1000 as early as possible.
+* All momentum, energy, and mass units are in MeV (e.g. `pt, E, m`). Unless asked otherwise, convert them to GeV by dividing by 1000 as early as possible.
+
+## Jets, Muons, Taus, Photons, Electrons
+
+It is possible to access all these objects from the top event level, e.g.,
+
+```python
+query = FuncADLQueryPHYS() \
+    .Select(lambda e: e.Jets()) \
+    .Select(lambda jets: {
+        'pt': jets.Select(lambda j: j.pt()/1000.0),
+        'eta': jets.Select(lambda j: j.eta()/1000.0),
+    })
+```
+
+The only odd one are tau's, which use `e.TauJets("AnalysisTauJets")`.
+
+These objects all have `pt, eta, phi` (with methods by those names). To access `px, py, pz` you have to get the 4-vector first:
+
+```python
+query = FuncADLQueryPHYS() \
+    .Select(lambda e: e.Jets()) \
+    .Select(lambda jets: {
+        'pt': jets.Select(lambda j: j.p4().px()/1000.0),
+    })
+```
 
 ## MissingET
 
