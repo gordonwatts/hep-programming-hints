@@ -21,7 +21,7 @@ print(flat_all)     # [0, 1, 2, 3, 4, 5, 6, 7]  (same here because only one leve
 
 Notes:
 
-- If a variable has no array structure, then `ak.flatten` will cause an error.
+- If a variable has no array structure or is a 1D array, then `ak.flatten` will cause an error.
 
 ## Combining Multiple Fields into Records
 
@@ -48,11 +48,20 @@ Awkward Arrays support NumPy-like boolean filtering. You can create a mask with 
 import awkward as ak
 
 array = ak.Array([[0, 1.1, 2.2], [3.3, 4.4], [], [5.5, 6.6, 7.7, 8.8]])
-result = array[array > 4]   # Apply a boolean mask condition:contentReference[oaicite:8]{index=8}
+result = array[array > 4]
 
 print(ak.to_list(result))
 # Output: [[[], [4.4]], [], [], [[5.5, 6.6, 7.7, 8.8]]]  (only values >4 kept, others dropped):contentReference[oaicite:9]{index=9}
 ```
+
+Filtering only works as long as the structure of the mask and the item you are masking are similar. For example:
+
+```python
+array = ak.Array([[0, 1.1, 2.2], [3.3, 4.4], [], [5.5, 6.6, 7.7, 8.8]])
+result = array[array > 4]
+extra_filtered_result = result[result > 5] # works
+extra_filtered_result = array[result > 5] # fails with mismatched and misaligned errors!!
+extra_filtered_result = result[array > 5] # Also fails with mismatched and misaligned errors!!
 
 ## Filtering by Counts (e.g. Require N Elements in Sublist)
 
@@ -70,6 +79,8 @@ print(ak.to_list(selected))
 ```
 
 Here `ak.num(events, axis=1)` returns `[3, 0, 2, 2]` (the number of items in each sublist), and we then filter for equals 2.
+
+Always be explicit about the `axis` argument in `ak.num`, never rely on the default.
 
 ## Sorting Elements in Each Sublist
 
@@ -89,7 +100,7 @@ You can specify `ascending=False` to sort in descending order, or provide an `ax
 
 ## Filtering sublists with `argmin` and `argmax` and friends
 
-Since `axis=0` is event lists, we often want to operated on the jagged arrays, e.g., `axis=1`. `argmin` and `argmax` are great for this, for example, when looking for two objects close to each other. However, `argmin` and `argmax` don't operate on `axis=1` (or deeper) the same way as `np.argmin` and `np.argmax` - and nor does the slicing.
+Since `axis=0` is event lists, we often want to operated on the jagged arrays, e.g., `axis=1`. `argmin` and `argmax` are great for this, for example, when looking for two objects close to each other. However, `argmin` and `argmax` don't operate on `axis=1` (or deeper) the same way as `np.argmin` and `np.argmax` - and nor does the slicing, so we must be deliberate when using `argmin` and friends.
 
 Instead, we need to use lists. For example:
 
@@ -105,12 +116,12 @@ print(ak.flatten(array[max_values])) # prints out "[7, None, 2, 8]"
 
 Note the `keepdims=True` - that makes sure you get that nested list, "[[0], [None], [0], [0]]", which can be correctly used for slicing.
 
-Once you do the filtering you must:
+Once you do the filtering (`array[max_values]`), if you want a list of the values, you must:
 
 - Use `ak.flatten` to undo the downlevel caused by `keepdims=True`, or
 - Use `ak.first` to pick out the first in the sub list.
 
-Either of these will give you "[7, None, 2, 8]" in this example. But you *have* to do this for every item filtered by `max_values`!
+Either of these will give you "[7, None, 2, 8]" in this example. But you *have* to do this for every item filtered by `max_values` - any filtering using `argmin` and friends. Note this trick is not necessary when filtering by values as describe in the above section.
 
 ## Reducing Values in Nested Arrays (Sum, etc.)
 
@@ -302,9 +313,15 @@ Always use the `fields` argument to label the fields. It makes it much easier to
 
 ## Numpy Operations that *just work*
 
-- `numpy` has a dispatch mechanism which allows some `numpy` functions to work on awkward arrays.
+- `numpy` has a dispatch mechanism which allows some `numpy` functions to work on awkward arrays. But as a general rule, the arrays must be `numpy-like` even if they are awkward - that is, not awkward/jagged!
   - For example, `np.stack` works as expected on awkward arrays. And the rules for `np.stack` are the same for awkward arrays - you need a 2D array, not a jagged array (it can be awkward type, but it must be effectively 2D).
-- `ak.stack` does not exist and will cause an error!
+- `ak.stack` does not exist and its used will cause an undefined symbol error!
+
+## Some Other Notes
+
+From previous mistakes made by LLM's:
+
+- `ak.fill_like(array, value)` - the value must be a numeric value (like a float or integer), not a string. It will return an array with the same structure as `array`, but with `value` in each occupied position.
 
 ---
 
