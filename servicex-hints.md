@@ -53,6 +53,8 @@ all_jet_pts = to_awk(
 * Always use `NFiles=1` as above, even if the user asks otherwise. If they do, tell them they can run it themselves when they are ready!
 * The query can be re-used.
 * Use `dataset.Rucio` for a `rucio` dataset, use `dataset.FileList` for a list of web accessible datasets (via `https` or `xrootd://`)
+* Only call deliver once - make sure all the data you want is in the query.
+* Do not accept a query that requires multiple datasets.
 
 ## Queries
 
@@ -64,7 +66,7 @@ Queries have to start from a base, like `FuncADLQueryPHYSLITE`.
 
 The `base_query` is a sequence of events. Each event contains collections of objects like Jets and Electrons. `evt.Jets()` gets you the collection of jets for a particular event. You can pass `calibrated=False` to prevent calibration in `PHYS`, but note that `PHYSLITE` does not have uncalibrated jets (or other objects) in it! This `func_adl` language is based on LINQ.
 
-The last `Select` must create a dictionary (a `Where` can be after that `Select`). Each element of the dictionary is a value, or a list of values. `func_adl` does not support nested objects of any sort: not even 2D arrays. Each element of the dictionary can be a value or a 1D list. Do not try to fetch a list of muons, where each muon is `pt, eta, phi, E`. Instead, fetch `mu_pt, mu_eta, mu_phi, mu_E`.
+The last `Select` must create a dictionary (one or more `Where`'s can be after that `Select`). Each element of the dictionary is a value, or a list of values. `func_adl` does not support nested objects of any sort: not even 2D arrays. Each element of the dictionary can be a value or a 1D list. Do not try to fetch a list of muons, where each muon is `pt, eta, phi, E`. Instead, fetch `mu_pt, mu_eta, mu_phi, mu_E`.
 
 `ServiceX` queries can not contain references to `awkward` functions. Instead, use `Select`, `Where`, to effect the same operations.
 
@@ -84,7 +86,7 @@ Notes:
 
 *(The above returns an Awkward Array of jet $p_T$ values under the key `pt`.)*
 
-## Selecting Nested Data per Event (Jets per Event)
+## Selecting Nested Data per Event
 
 Use nested `Select` calls to retain event structure, retrieving jet properties as lists per event. In this example, each event’s jets are kept together, with their $p_T$ and $\eta$ values:
 
@@ -116,7 +118,7 @@ Nor can you have nested dictionaries.
 
 *Each event in the resulting Awkward Array has a list of events, each with a list of jet $p_T$ and $\eta$ values.*
 
-## Filtering Objects in a Query (Jet Cuts)
+## Filtering Objects in a Query
 
 Use the `Where` operator to filter objects by a condition. For example, to select only jets with $p_T > 30~GeV$:
 
@@ -153,18 +155,38 @@ FuncADL queries can return multiple collections simultaneously. For example, to 
 
 ```python
 # Select electron and muon collections, then pick their pt and eta
-query = (FuncADLQueryPHYSLITE() \
-    .Select(lambda e: (e.Electrons(), e.Muons()))
+query = (FuncADLQueryPHYSLITE()
+    .Select(lambda e: {
+        'ele': e.Electrons(), 
+        'mu': e.Muons()
+    }))
     .Select(lambda pairs: {
-        'ele_pt':  pairs[0].Select(lambda ele: ele.pt()),
-        'ele_eta': pairs[0].Select(lambda ele: ele.eta())
-        'mu_pt': pairs[1].Select(lambda mu: mu.pt()),
-        'mu_eta': pairs[1].Select(lambda mu: mu.eta())
+        'ele_pt':  pairs.ele.Select(lambda ele: ele.pt()),
+        'ele_eta': pairs.ele.Select(lambda ele: ele.eta())
+        'mu_pt': pairs.mu.Select(lambda mu: mu.pt()),
+        'mu_eta': pairs.mu.Select(lambda mu: mu.eta())
     })
-)
 ```
 
-*Here `pairs[0]` and `pairs[1]` refer to the Electron and Muon lists respectively. The result contains four Awkward Array fields: electron $p_T$, electron $\eta$, muon $p_T$, muon $\eta$ for each event.*
+*Here `pairs.ele` and `pairs.mu` refer to the Electron and Muon lists respectively. The result contains four Awkward Array fields: electron $p_T$, electron $\eta$, muon $p_T$, muon $\eta$ for each event.*
+
+Filtering objects is often most easily done at this level as well, as it means putting the filter in only once:
+
+```python
+query = (FuncADLQueryPHYSLITE()
+    .Select(lambda e: {
+        'ele': e.Electrons().Select(lambda e: e.pt() > 30), 
+        'mu': e.Muons().Select(lambda m: abs(m.eta()) < 2.5)
+    }))
+    .Select(lambda pairs: {
+        'ele_pt':  pairs.ele.Select(lambda ele: ele.pt()),
+        'ele_eta': pairs.ele.Select(lambda ele: ele.eta())
+        'mu_pt': pairs.mu.Select(lambda mu: mu.pt()),
+        'mu_eta': pairs.mu.Select(lambda mu: mu.eta())
+    })
+```
+
+Only electrons with $pt > 30$ and central muons will have their pt and eta transferred back from ServiceX.
 
 ## Computing New Variables in the Query
 
