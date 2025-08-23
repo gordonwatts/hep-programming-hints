@@ -5,6 +5,8 @@ For each histogram that needs to be made, list title, x, y, axis titles, number 
 Notes:
 
 * Where possible, repeat a name that was used to refer to the histogramming data in a previous step.
+* For labels, use latex and not unicode characters when math or other symbols are required.
+* Do not hesitate to use latex symbols in the title and axes. Looks more professional!
 
 == Start Example Response ==
 
