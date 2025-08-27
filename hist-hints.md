@@ -93,7 +93,7 @@ plt.style.use(hep.style.ATLAS)  # use a ATLAS-inspired style for HEP plots
 fig, ax = plt.subplots()
 histogram.plot(histtype="fill", linewidth=1, edgecolor="gray", label="ttbar")
 ax.legend()
-ax.set_xlabel("Mass [GeV]")
+ax.set_xlabel("Mass ($m_H$) [GeV]")
 ax.set_title("Higgs Mass")
 ```
 
