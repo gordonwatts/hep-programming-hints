@@ -3,14 +3,12 @@
 ## Importing and checking version
 
 ```python
-import hist
-print(hist.__version__)  # should be "2.8.1" as of 2025
+from hist import Hist # To get the histo creating object
 ```
 
 ## Creating a histogram (QuickConstruct)
 
 ```python
-from hist import Hist
 # Define a 2D histogram: 10 bins in x [0,1), variable bins for y
 h = (
     Hist.new.Reg(10, 0, 1, name="x", label="x-axis")
