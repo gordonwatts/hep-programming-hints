@@ -117,5 +117,5 @@ You can also use `fig.savefig(...)`, of course, if you have the `fig` from makin
 
 ## Notes
 
-* Keep histogram titles short - otherwise they are larger than the histogram itself
+* Keep histogram titles short - otherwise they are larger than the histogram itself. For example, don't include the dataset name in the overall plot title (e.g. `plt.title` or `ax.set_title`).
 * Place extra information in the legend or write it on the plot somewhere.
