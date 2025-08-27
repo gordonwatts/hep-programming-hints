@@ -323,6 +323,8 @@ Always use the `fields` argument to label the fields. It makes it much easier to
 From previous mistakes made by LLM's:
 
 - `ak.fill_like(array, value)` - the value must be a numeric value (like a float or integer), not a string. It will return an array with the same structure as `array`, but with `value` in each occupied position.
+- Python's `abs` works just fine on awkward arrays (there is no `ak.abs`)
+- There is no `ak.take` - use filtering instead.
 
 ---
 
