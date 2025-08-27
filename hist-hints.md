@@ -82,16 +82,19 @@ h_sig = histogram[:, "4j2b", "ttbar", "nominal"]
 
 ## Plotting a 1D histogram with mplhep style
 
+Use the `fix, ax = plt.subplots()` to create the plots. Use the default `figsize` unless otherwise instructed (e.g. don't specify it).
+
 ```python
 import matplotlib.pyplot as plt
 import mplhep as hep
 plt.style.use(hep.style.ATLAS)  # use a ATLAS-inspired style for HEP plots
 
 # Plot the 1D slice with filled histogram style
-h_sig.plot(histtype="fill", linewidth=1, edgecolor="gray", label="ttbar")
-plt.legend()
-plt.xlabel("Mass [GeV]")
-plt.show()
+fig, ax = plt.subplots()
+histogram.plot(histtype="fill", linewidth=1, edgecolor="gray", label="ttbar")
+ax.legend()
+ax.set_xlabel("Mass [GeV]")
+ax.set_title("Higgs Mass")
 ```
 
 * Possible values for `histtype`: fill, step, errorbar, band, bar, barstep. Anything else will cause an error. By default use `fill`.
@@ -103,19 +106,22 @@ plt.show()
 import matplotlib.pyplot as plt
 import mplhep as hep
 
+fig, ax = plt.subplots()
 mplhep.hist2dplot(h)  # display 2D histogram as colormesh
-plt.show()
 ```
 
 ## Saving a plot to a file
 
 ```python
-plt.savefig("histogram.png")
+fig.savefig("histogram.png")
+plt.close(fig)
 ```
 
-You can also use `fig.savefig(...)`, of course, if you have the `fig` from making sub plots.
+You can also use `fig.savefig(...)`, of course, if you have the `fig` from making sub plots. `plt.close(fig)` the figure after saving it to a file to free up memory.
 
 ## Notes
 
 * Keep histogram titles short - otherwise they are larger than the histogram itself. For example, don't include the dataset name in the overall plot title (e.g. `plt.title` or `ax.set_title`).
+  * Good: "Jet $p_T$
+  * Bad: "Jet $p_T$ in Data18 With Eta Cut"
 * Place extra information in the legend or write it on the plot somewhere.
