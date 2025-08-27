@@ -23,7 +23,7 @@ The `Reg` method creates a regular (uniform-width) binned axis for the histogram
 
 The `Var` method in the Hist API creates a variable-width binned axis for your histogram. Unlike .Reg, which makes bins of equal width, `Var` lets you specify the exact bin edges, so each bin can have a different width.
 
-Labels can contains `LaTeX` (and should for `eta` ($\eta$) and `pt` ($p_{T}$)). If you are using a f-string or `str.format(...)` that the curly LaTeX braces must be escaped.
+Labels can contains `LaTeX` (and should for `eta` ($\eta$) and `pt` ($p_{T}$)). If you are using a f-string or `str.format(...)` that the curly LaTeX braces must be escaped. Make sure you surround the math symbols with `$`!!
 
 ## Filling a histogram with data
 
