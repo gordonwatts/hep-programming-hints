@@ -1,6 +1,6 @@
 # Hist (scikit-hep) library code snippets
 
-## Importing and checking version
+## Importing
 
 ```python
 from hist import Hist # To get the histo creating object
