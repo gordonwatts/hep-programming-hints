@@ -94,9 +94,8 @@ plt.xlabel("Mass [GeV]")
 plt.show()
 ```
 
-Possible values for `histtype`: fill, step, errorbar, band, bar, barstep. Anything else will cause an error. By default use `fill`.
-
-Titles and axes labels can contains `LaTeX` (and should for `eta` ($\eta$) and `pt` ($p_{T}$)). If you are using a f-string or `str.format(...)` that the curly LaTeX braces must be escaped.
+* Possible values for `histtype`: fill, step, errorbar, band, bar, barstep. Anything else will cause an error. By default use `fill`.
+* Titles and axes labels can contains `LaTeX` (and should for `eta` ($\eta$) and `pt` ($p_{T}$)). If you are using a f-string or `str.format(...)` that the curly LaTeX braces must be escaped.
 
 ## Plotting a 2D histogram
 
@@ -115,3 +114,8 @@ plt.savefig("histogram.png")
 ```
 
 You can also use `fig.savefig(...)`, of course, if you have the `fig` from making sub plots.
+
+## Notes
+
+* Keep histogram titles short - otherwise they are larger than the histogram itself
+* Place extra information in the legend or write it on the plot somewhere.
