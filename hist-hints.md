@@ -80,7 +80,7 @@ h_sig = histogram[:, "4j2b", "ttbar", "nominal"]
 
 ## Plotting a 1D histogram with mplhep style
 
-Use the `fix, ax = plt.subplots()` to create the plots. Use the default `figsize` unless otherwise instructed (e.g. don't specify it).
+Use the `fix, ax = plt.subplots()` to create the plots. Use the default `figsize` unless otherwise instructed (e.g. don't specify it). DO NOT Specify a `figsize`! Leave it at the default!
 
 ```python
 import matplotlib.pyplot as plt
