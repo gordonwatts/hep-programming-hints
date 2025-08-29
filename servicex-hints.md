@@ -221,3 +221,9 @@ query = (FuncADLQueryPHYSLITE()
     .Where(lambda e: e.Jets().Count() > 0)
     .Select(lambda e: {'first_jet_pt': e.Jets().First().pt()}))
 ```
+
+## Errors
+
+If you encounter an error after running, there are two types. The first give you type errors, and those you can solve just by reading them and perhaps not doing whatever the code complained about.
+
+The second type of error there isn't much you can do to get more information, however. You'll find an error that looks like "Transform "xxx" completed with failures." And something in `stdout` about clicking on `HERE` to get more information. Sadly, only the requester can do that. If that happens just reply with "HELP USER" and that will be a signal.
