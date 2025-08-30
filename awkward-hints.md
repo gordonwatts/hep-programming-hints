@@ -120,7 +120,7 @@ Note the `keepdims=True` - that makes sure you get that nested list, "[[0], [Non
 Once you do the filtering (`array[max_values]`), if you want a list of the values, you must:
 
 - Use `ak.flatten` to undo the downlevel caused by `keepdims=True`, or
-- Use `ak.first` to pick out the first in the sub list.
+- Use `ak.firsts` to pick out the first in the sub list.
 
 Either of these will give you "[7, None, 2, 8]" in this example. But you *have* to do this for every item filtered by `max_values` - any filtering using `argmin` and friends. Note this trick is not necessary when filtering by values as describe in the above section.
 
