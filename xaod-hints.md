@@ -46,8 +46,9 @@ Despite being only a single missing ET for the event, it is stored as a sequence
 
 ## xAOD Tool Access
 
-Lots of things have to be accessed by creating tools. The code below should be used directly to help
-define tools in the code. This code must be copied into the code you are writing.
+Lots of things have to be accessed by creating tools.
+
+Copy the code below into your source if you are going to use a code. The methods it defines can be used to build in tool access.
 
 ```python
 from dataclasses import dataclass
@@ -179,18 +180,20 @@ def make_tool_accessor(
 
 ### BTaggingSelectionTool: getting jet b-tagging results
 
-Use this tool to get either a tag weight/discriminant for b-or-charm tagging and to see if a jet is "tagged" for a particular working point. These are provided by the FTAG group in ATLAS.
+Use the `BTaggingSelectionTool` tool to get either a tag weight/discriminant for b-or-charm tagging or to see if a jet is "tagged" for a particular working point (e.g. passed an experiment defined threshold). These are provided by the FTAG group in ATLAS.
 
 Operating Point Info:
 
-* `FixedCutBEff_65`, `FixedCutBEff_70`, `FixedCutBEff_77`, `FixedCutBEff_85`, `FixedCutBEff_90`
+Operating points define different b-tagging efficiency and light/charm rejection.
+
+* Known operating point names: `FixedCutBEff_65`, `FixedCutBEff_70`, `FixedCutBEff_77`, `FixedCutBEff_85`, `FixedCutBEff_90`
 * [Further information for user](https://ftag.docs.cern.ch/recommendations/algs/r22-preliminary/#gn2v01-b-tagging)
 * By default choose the `FixedCutBEff_77` working point.
-* Make sure to let the user know if you choose an operating point in your text explanation.
+* Make sure to let the user know what operating point in your text explanation.
 
 Make sure the `tool_name` is different if you need to define multiple tools (because user needs more than one operating point)! Name them something reasonable so the code makes sense!
 
-Make sure to copy in the code block in the section above `xAOD Tool Access`.
+Make sure to copy in the code block shown in the section above `xAOD Tool Access`.
 
 ```python
 # Specific for the below code
@@ -230,3 +233,10 @@ jet_is_tagged = make_tool_accessor(
     return_type_cpp="bool",
     return_type_python="bool",
 )
+
+Usage of `jet_is_tagged` in `func_adl` is straight forward:
+
+```python
+query = (FuncADLQueryPHYSLITE()
+    .Select(lambda e: e.Jets().Select(lambda j: jet_is_tagged(j)))
+```
