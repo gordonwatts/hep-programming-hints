@@ -8,6 +8,7 @@ Notes:
 
 * Servicex is capable of complex operations, don't do anything beyond filtering
 * Units: At the end of this step everything should be in units of GeV for energy, momentum, etc., and distance measurements should be in meters.
+* Don't worry about exact ServiceX data times (containers, etc.). Just mention the general items. A data expert will go over this and is responsible for mapping to explicit containers and branches, etc., in the data file.
 
 Here is an example output:
 
