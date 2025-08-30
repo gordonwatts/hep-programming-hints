@@ -4,7 +4,10 @@ In this phase the data is fetched from the ATLAS xAOD data file and returned. Ad
 
 The xAOD is arranged in collections (jets, tracks, muons, electrons, photons, vertices, etc.). In this phase you must identify all the collections, and the specific data from each collection, required.
 
-While servicex is capable of complex operations, we want to keep this simple (as long as we can reduce the amount of data we need to pull).
+Notes:
+
+* Servicex is capable of complex operations, don't do anything beyond filtering
+* Units: At the end of this step everything should be in units of GeV for energy, momentum, etc., and distance measurements should be in meters.
 
 Here is an example output:
 

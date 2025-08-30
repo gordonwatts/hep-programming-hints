@@ -4,7 +4,10 @@ Use ServiceX to fetch data from `rucio` datasets on the GRID, skimming out only 
 
 Fetching data is two steps. First, construct a query. Second, execute the query against a dataset.
 
-Important Note: Moving data out of ServiceX and into awkward arrays is expensive. If there is something you can do to reduce the amount of data out of ServiceX it is worth doing it. For example, if you know that you'll never use jets with less than 40 GeV, you can filter jets at the ServiceX level.
+Notes:
+
+* Moving data out of ServiceX and into awkward arrays is expensive. If there is something you can do to reduce the amount of data out of ServiceX it is worth doing it. For example, if you know that you'll never use jets with less than 40 GeV, you can filter jets at the ServiceX level.
+* Quantities returned from servicex should be in units most people use at the LHC - GeV, meters, etc. Please convert from whatever the units of the input files are.
 
 ## A Simple Full Example
 
@@ -44,6 +47,8 @@ all_jet_pts = to_awk(
         ),
     )
 )
+
+data = all_jet_pts["jet_pt_fetch"]
 ```
 
 `all_jet_pts` is a dictionary indexed by the `Sample` `Name`. And `all_jet_pts["jet_pt_fetch"].jet_pt` is a awkward array of jets $p_T$'s.
@@ -161,9 +166,9 @@ query = (FuncADLQueryPHYSLITE()
         'mu': e.Muons()
     }))
     .Select(lambda pairs: {
-        'ele_pt':  pairs.ele.Select(lambda ele: ele.pt()),
+        'ele_pt':  pairs.ele.Select(lambda ele: ele.pt()/1000),
         'ele_eta': pairs.ele.Select(lambda ele: ele.eta())
-        'mu_pt': pairs.mu.Select(lambda mu: mu.pt()),
+        'mu_pt': pairs.mu.Select(lambda mu: mu.pt()/1000),
         'mu_eta': pairs.mu.Select(lambda mu: mu.eta())
     })
 ```
@@ -175,13 +180,13 @@ Filtering objects is often most easily done at this level as well, as it means p
 ```python
 query = (FuncADLQueryPHYSLITE()
     .Select(lambda e: {
-        'ele': e.Electrons().Select(lambda e: e.pt() > 30), 
+        'ele': e.Electrons().Select(lambda e: e.pt()/1000 > 30), 
         'mu': e.Muons().Select(lambda m: abs(m.eta()) < 2.5)
     }))
     .Select(lambda pairs: {
-        'ele_pt':  pairs.ele.Select(lambda ele: ele.pt()),
+        'ele_pt':  pairs.ele.Select(lambda ele: ele.pt()/1000),
         'ele_eta': pairs.ele.Select(lambda ele: ele.eta())
-        'mu_pt': pairs.mu.Select(lambda mu: mu.pt()),
+        'mu_pt': pairs.mu.Select(lambda mu: mu.pt()/1000),
         'mu_eta': pairs.mu.Select(lambda mu: mu.eta())
     })
 ```
@@ -211,7 +216,7 @@ Sometimes one needs the first object in a sequence. For example, to get the firs
 
 ```python
 query = (FuncADLQueryPHYSLITE()
-    .Select(lambda e: {'first_jet_pt': e.Jets().First().pt()}))
+    .Select(lambda e: {'first_jet_pt': e.Jets().First().pt()/1000}))
 ```
 
 Note that if there are no jets, then this will crash - so if there might be zero in the sequence, protect with a count:
@@ -219,7 +224,7 @@ Note that if there are no jets, then this will crash - so if there might be zero
 ```python
 query = (FuncADLQueryPHYSLITE()
     .Where(lambda e: e.Jets().Count() > 0)
-    .Select(lambda e: {'first_jet_pt': e.Jets().First().pt()}))
+    .Select(lambda e: {'first_jet_pt': e.Jets().First().pt()/1000}))
 ```
 
 ## Errors

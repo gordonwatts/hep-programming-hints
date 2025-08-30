@@ -15,7 +15,8 @@ Each step should be specified in a short english sentence, do not resort to actu
 
 Notes:
 
-* Don't re-apply filters that you've already specified in a previous phase.
+* Don't re-apply filters that you've already specified in a previous phase. Look at the solution to understand what should be done.
+* Assume all input data is in units like GeV and meters - no need to convert.
 * Give complex objects a name when they are built, and refer to them later on
 
 == Start Example Response ==
