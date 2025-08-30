@@ -138,6 +138,8 @@ query = (FuncADLQueryPHYSLITE()
 
 *This returns the $\eta$ of all jets with $p_T > 30$ GeV. The `Where` clause filters the jets before the final selection.*
 
+Use the standard python logic operators, like `and` and `or` to combine conditions. Remember to include `(` and `)` when needed.
+
 ## Filtering Events by Object Count
 
 You can filter entire events based on conditions on contained objects using `.Where(...).Count()`. For example, to get events with at least **2 jets** above 30 GeV:
