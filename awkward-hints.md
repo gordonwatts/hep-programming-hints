@@ -126,7 +126,7 @@ Either of these will give you "[7, None, 2, 8]" in this example. But you *have* 
 
 ## Reducing Values in Nested Arrays (Sum, etc.)
 
-Awkward Array supports reductions (like sum, min, max, etc.) over specified axes. For example, **`ak.sum`** can sum numbers across different dimensions:
+Awkward Array supports reductions (like sum, etc.) over specified axes. For example, **`ak.sum`** can sum numbers across different dimensions:
 
 - **Sum within each sublist:** Use `axis=1` (or `axis=-1` for the innermost axis) to sum each list of values independently.
 - **Sum across outer lists:** Use `axis=0` to sum element-wise across the outermost dimension.
@@ -144,6 +144,8 @@ print(total_sum)                # 21          (sum of all numbers in the array)
 ```
 
 In another example, summing along `axis=0` across jagged lists will align elements by index: e.g., summing `[[1,2,3], [], [3,4]]` with `axis=0` yields `[4, 6, 3]` because it adds element-wise down columns (missing values are treated as 0).
+
+Awkward does not have a `ak.max` - but the `python` `max` and `min` functions work on awkward arrays.
 
 ## Cartesian Products of Lists (All Combinations)
 
