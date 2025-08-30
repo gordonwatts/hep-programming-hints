@@ -21,3 +21,4 @@ The following are some guesses given we are at the LHC on the ATLAS experiment. 
   - J/Psi: 0 to 10 GeV
   - Unknown: Safe between 0 and 300 GeV
 - Missing ET: 0 to 200 GeV
+- btagging discriminant: -5 to 15 (it is a ratio of NN outputs).
