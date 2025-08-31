@@ -30,7 +30,7 @@ jet_pts_query = (base_query
 )
 
 # Do the fetch
-# Define the dataset
+# Define the rucio dataset identifier (DID).
 ds_name = ("mc23_13p6TeV:mc23_13p6TeV.801167.Py8EG_A14NNPDF23LO_jj_JZ2.deriv.DAOD_PHYSLITE.e8514_e8528_a911_s4114_r15224_r15225_p6697")
 
 all_jet_pts = to_awk(
@@ -52,6 +52,8 @@ data = all_jet_pts["jet_pt_fetch"]
 ```
 
 `all_jet_pts` is a dictionary indexed by the `Sample` `Name`. And `all_jet_pts["jet_pt_fetch"].jet_pt` is a awkward array of jets $p_T$'s.
+
+Make sure to copy over the dataset name the user has requested into `ds_name` carefully! If it isn't right then ServiceX fails with a odd error.
 
 ## The `deliver` function
 
