@@ -234,3 +234,5 @@ query = (FuncADLQueryPHYSLITE()
 If you encounter an error after running, there are two types. The first give you type errors, and those you can solve just by reading them and perhaps not doing whatever the code complained about. You might have to look carefully for this message - for example "Method <xx> not found on object"
 
 The second type of error there isn't much you can do to get more information, however. You'll find an error that looks like "Transform "xxx" completed with failures." And something in `stdout` about clicking on `HERE` to get more information. Sadly, only the requester can do that. If that happens just reply with "HELP USER" and that will be a signal.
+
+A third type of error occurs when your transform fails, with 0 files, and in `stdout` you see `Transform ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0/0 --:--` - the `0/0` is key - this means your dataset is invalid. Check it against the user specified dataset, and if it is the same, it means the dataset does not exist or is empty.
