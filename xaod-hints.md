@@ -259,11 +259,11 @@ Don't apply any event or sample weights to data unless explicitly requested.
 
 ### MC Event Weight
 
-This is encoded on the `EventInfo` object, and it is the first `mcEventWeight`:
+This is encoded on the `EventInfo` object (there is only one), and it is the first `mcEventWeight`:
 
 ```python
 query = (FuncADLQueryPHYSLITE()
-    .Select(lambda e: e.EventInfo("EventInfo").Select(lambda e: e.mcEventWeight(0)
+    .Select(lambda e: e.EventInfo("EventInfo").mcEventWeight(0))
 ```
 
 ### Crossection Scaling
