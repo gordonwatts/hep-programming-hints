@@ -255,6 +255,8 @@ Always make sure to tell the user what event weights you are applying. If the ab
 
 If any calculations are required (e.g. cross section times integrated luminosity, etc), do them in the code to the user can update things as they wish.
 
+Don't apply any event or sample weights to data unless explicitly requested.
+
 ### MC Event Weight
 
 This is encoded on the `EventInfo` object, and it is the first `mcEventWeight`:
@@ -263,3 +265,24 @@ This is encoded on the `EventInfo` object, and it is the first `mcEventWeight`:
 query = (FuncADLQueryPHYSLITE()
     .Select(lambda e: e.EventInfo("EventInfo").Select(lambda e: e.mcEventWeight(0)
 ```
+
+### Crossection Scaling
+
+Each event in a sample is scaled by a constant scale factor:
+
+$ sf = $ L * \sigma / N_S $
+
+* $L$ - the target integrated luminosity for the plot. Use 1 fempto-barn-1 by default.
+* $\sigma$ the cross section of the sample - see below. Doublecheck the units of these numbers! See below for information.
+* $N_S$ the total number of events in the sample. This must be taken as the total number of events in the file before *any* cuts.
+
+The cross-section table is below, organized by run number and name. Every ATLAS sample is unique by run number, which is in the name of the dataset. For example, "mc23_13p6TeV:mc23_13p6TeV.801167.Py8EG_A14NNPDF23LO_jj_JZ2.deriv.DAOD_PHYSLITE.e8514_e8528_a911_s4114_r15224_r15225_p6697" is an MC dataset with run number 801167 and name Py8EG_A14NNPDF23LO_jj_JZ2 (or JZ2). Data leads with "data..." in the name.
+
+Run Number | Name | Cross Section
+--- | --- | ---
+801167 | Py8EG_A14NNPDF23LO_jj_JZ2 | 2.58 mili-barn
+513109 | MGPy8EG_Zmumu_FxFx3jHT2bias_SW_CFilterBVeto | 2.39 nano-barn
+601237 | PhPy8EG_A14_ttbar_hdamp258p75_allhad | 812 pico-barn
+701005 | Sh_2214_lllvjj | 53.1 fempto-barn
+
+Make sure to do all calculations in the code; don't do the math in your head. The user may well want to take the code and change some of the parameters.
