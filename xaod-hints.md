@@ -276,6 +276,8 @@ $ sf = $ L * \sigma / N_S $
 * $\sigma$ the cross section of the sample - see below. Doublecheck the units of these numbers! See below for information.
 * $N_S$ sum of all the per-event weights (the `mcEventWeight(0)` above). This must be taken as the sum over all events in the file - before *any* cuts. Gather the `mcEventWeight(0)` for all events in the file.
 
+For a plot, please place the integrated luminosity you rescaled the MC to (`L=xx $fb^-1$`) somewhere on the plot.
+
 The cross-section table is below, organized by run number and name. Every ATLAS sample is unique by run number, which is in the name of the dataset. For example, "mc23_13p6TeV:mc23_13p6TeV.801167.Py8EG_A14NNPDF23LO_jj_JZ2.deriv.DAOD_PHYSLITE.e8514_e8528_a911_s4114_r15224_r15225_p6697" is an MC dataset with run number 801167 and name Py8EG_A14NNPDF23LO_jj_JZ2 (or JZ2). Data leads with "data..." in the name.
 
 Run Number | Name | Cross Section
