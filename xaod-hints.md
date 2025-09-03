@@ -241,7 +241,7 @@ query = (FuncADLQueryPHYSLITE()
     .Select(lambda e: e.Jets().Select(lambda j: jet_is_tagged(j)))
 ```
 
-## Event Weights
+## Event and Sample Weights
 
 Unless otherwise requested by the user, use the following guidelines to determine how to do event weighting:
 
