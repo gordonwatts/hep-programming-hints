@@ -274,7 +274,7 @@ $ sf = $ L * \sigma / N_S $
 
 * $L$ - the target integrated luminosity for the plot. Use 1 femto-barn-1 by default.
 * $\sigma$ the cross section of the sample - see below. Doublecheck the units of these numbers! See below for information.
-* $N_S$ the total number of events in the sample. This must be taken as the total number of events in the file before *any* cuts.
+* $N_S$ the total number of events in the sample. This must be taken as the total number of events in the file before *any* cuts. To do this, you should collect a "1" for every event, and then take the len of the array. See below for an example.
 
 The cross-section table is below, organized by run number and name. Every ATLAS sample is unique by run number, which is in the name of the dataset. For example, "mc23_13p6TeV:mc23_13p6TeV.801167.Py8EG_A14NNPDF23LO_jj_JZ2.deriv.DAOD_PHYSLITE.e8514_e8528_a911_s4114_r15224_r15225_p6697" is an MC dataset with run number 801167 and name Py8EG_A14NNPDF23LO_jj_JZ2 (or JZ2). Data leads with "data..." in the name.
 
@@ -286,4 +286,14 @@ Run Number | Name | Cross Section
 601237 | PhPy8EG_A14_ttbar_hdamp258p75_allhad | 812 pico-barn
 701005 | Sh_2214_lllvjj | 53.1 femto-barn
 
+#### Counting The Sample Size
+
+If you can do something similar to this:
+
+```python
+query = (FuncADLQueryPHYSLITE()
+    .Select(lambda e: 1.0)
+```
+
+And take the `len` of the array when it comes back.
 Make sure to do all calculations in the code; don't do the math in your head. The user may well want to take the code and change some of the parameters.
