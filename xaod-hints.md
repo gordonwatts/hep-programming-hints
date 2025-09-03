@@ -280,8 +280,8 @@ The cross-section table is below, organized by run number and name. Every ATLAS 
 
 Run Number | Name | Cross Section
 --- | --- | ---
-801167 | Py8EG_A14NNPDF23LO_jj_JZ2 | 2.58 mili-barn
-801168 | Py8EG_A14NNPDF23LO_jj_JZ3 | 8.6 micro-barn
+801167 | Py8EG_A14NNPDF23LO_jj_JZ2 | 2582600000.0 pico-barn
+801168 | Py8EG_A14NNPDF23LO_jj_JZ3 | 28528000.0 pico-barn
 513109 | MGPy8EG_Zmumu_FxFx3jHT2bias_SW_CFilterBVeto | 2.39 nano-barn
 601237 | PhPy8EG_A14_ttbar_hdamp258p75_allhad | 812 pico-barn
 701005 | Sh_2214_lllvjj | 53.1 femto-barn
