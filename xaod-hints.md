@@ -240,3 +240,15 @@ Usage of `jet_is_tagged` in `func_adl` is straight forward:
 query = (FuncADLQueryPHYSLITE()
     .Select(lambda e: e.Jets().Select(lambda j: jet_is_tagged(j)))
 ```
+
+## Event Weights
+
+Unless otherwise requested by the user, use the following guidelines to determine how to do event weighting:
+
+* **Single MC or Data Dataset**: Apply only the MC event weight.
+
+* **Multiple MC Datasets**: Apply the MC event weights, and the cross section. If the cross section weight isn't available for any one sample, then don't apply it for any samples (and make sure to tell the user you are missing that information). The normal way to plot this is with a stacked histogram.
+
+* **MC and Data*: Apply the MC event weights and the cross section, and scale to the integrated luminosity of the data. The normal way to plot this is to use a stacked histogram and the data as a filled black circles.
+
+Always make sure to tell the user what event weights you are applying.
