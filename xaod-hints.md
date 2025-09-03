@@ -272,7 +272,7 @@ Each event in a sample is scaled by a constant scale factor:
 
 $ sf = $ L * \sigma / N_S $
 
-* $L$ - the target integrated luminosity for the plot. Use 1 fempto-barn-1 by default.
+* $L$ - the target integrated luminosity for the plot. Use 1 femto-barn-1 by default.
 * $\sigma$ the cross section of the sample - see below. Doublecheck the units of these numbers! See below for information.
 * $N_S$ the total number of events in the sample. This must be taken as the total number of events in the file before *any* cuts.
 
@@ -281,8 +281,9 @@ The cross-section table is below, organized by run number and name. Every ATLAS 
 Run Number | Name | Cross Section
 --- | --- | ---
 801167 | Py8EG_A14NNPDF23LO_jj_JZ2 | 2.58 mili-barn
+801168 | Py8EG_A14NNPDF23LO_jj_JZ3 | 8.6 micro-barn
 513109 | MGPy8EG_Zmumu_FxFx3jHT2bias_SW_CFilterBVeto | 2.39 nano-barn
 601237 | PhPy8EG_A14_ttbar_hdamp258p75_allhad | 812 pico-barn
-701005 | Sh_2214_lllvjj | 53.1 fempto-barn
+701005 | Sh_2214_lllvjj | 53.1 femto-barn
 
 Make sure to do all calculations in the code; don't do the math in your head. The user may well want to take the code and change some of the parameters.
