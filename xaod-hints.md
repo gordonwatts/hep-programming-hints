@@ -274,11 +274,11 @@ The dataset will contain a tag detailing which run you are looking at. We are us
 
 Dataset | Number of Events | Total Luminosity |
 | --- | --- | --- |
-data24_13p6TeV | 5000000000 | 52.4 femto-barns^-1 |
-data22_13p6TeV | 5000000000 | 52.4 femto-barns^-1 |
-data23_13p6TeV | 5000000000 | 52.4 femto-barns^-1 |
-data24_13p6TeV | 5000000000 | 52.4 femto-barns^-1 |
-data25_13p6TeV | 3750000000 | 39.3 femto-barns^-1 |
+data24_13p6TeV | 2000000000 | 52.4 femto-barns^-1 |
+data22_13p6TeV | 2000000000 | 52.4 femto-barns^-1 |
+data23_13p6TeV | 2000000000 | 52.4 femto-barns^-1 |
+data24_13p6TeV | 2000000000 | 52.4 femto-barns^-1 |
+data25_13p6TeV | 1500000000 | 39.3 femto-barns^-1 |
 
 ### Cross-section Scaling and MC
 
