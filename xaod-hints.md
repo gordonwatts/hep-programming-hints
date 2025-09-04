@@ -247,15 +247,13 @@ Unless otherwise requested by the user, use the following guidelines to determin
 
 * **Single MC or Data Dataset**: Apply only the MC event weight.
 
-* **Multiple MC Datasets**: Apply the MC event weights, and the cross section scaling. If the cross section values aren't available for any one sample, then don't apply it for any samples (and make sure to tell the user you are missing that information). The normal way to plot this is with a stacked histogram.
+* **Multiple MC Datasets**: Apply the MC event weight and the cross section scaling. If the cross section values aren't available for any one sample, then don't apply it for any samples (and make sure to tell the user in the notes you are missing that information). The normal way to plot this is with a stacked histogram.
 
-* **MC and Data*: Apply the MC event weights and the cross section, and scale to the integrated luminosity of the data. The normal way to plot this is to use a stacked histogram and the data as a filled black circles.
+* **MC and Data**: Apply the MC event weights and the cross section, and scale to the integrated luminosity of the data. The normal way to plot this is to use a stacked histogram and the data as a filled black circles.
 
 Always make sure to tell the user what event weights you are applying. If the above guidance tells you to apply event weights but you don't know how, warn the user.
 
-If any calculations are required (e.g. cross section times integrated luminosity, etc), do them in the code to the user can update things as they wish.
-
-Don't apply any event or sample weights to data unless explicitly requested.
+If any calculations are required (e.g. cross section times integrated luminosity, etc), do them in the code so the user can update things as they wish.
 
 ### MC Event Weight
 
@@ -276,8 +274,6 @@ $ sf = $ L * \sigma / N_S $
 * $\sigma$ the cross section of the sample - see below. Doublecheck the units of these numbers! See below for information.
 * $N_S$ sum of all the per-event weights (the `mcEventWeight(0)` above). This must be taken as the sum over all events in the file - before *any* cuts. Gather the `mcEventWeight(0)` for all events in the file.
 
-For a plot, please place the integrated luminosity you rescaled the MC to (`L=xx $fb^-1$`) somewhere on the plot.
-
 The cross-section table is below, organized by run number and name. Every ATLAS sample is unique by run number, which is in the name of the dataset. For example, "mc23_13p6TeV:mc23_13p6TeV.801167.Py8EG_A14NNPDF23LO_jj_JZ2.deriv.DAOD_PHYSLITE.e8514_e8528_a911_s4114_r15224_r15225_p6697" is an MC dataset with run number 801167 and name Py8EG_A14NNPDF23LO_jj_JZ2 (or JZ2). Data leads with "data..." in the name.
 
 Run Number | Name | Cross Section
@@ -289,3 +285,7 @@ Run Number | Name | Cross Section
 701005 | Sh_2214_lllvjj | 53.1 femto-barn
 
 Make sure to do all calculations in the code; don't do the math in your head. The user may well want to take the code and change some of the parameters.
+
+### Event Scaling and Information on the Plot
+
+When applying this scaling, detail what you are doing in some detail in the notes. On the plot, only put the integrated luminosity you rescaled the MC to (`L=xx $fb^-1$`). Do not mention what scaling was applied, etc., on the plot itself. We want as little possible to detract from the display of the data. If you aren't doing the luminosity rescaling, don't put anything on the plot.
