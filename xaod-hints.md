@@ -255,6 +255,8 @@ Always make sure to tell the user what event weights you are applying. If the ab
 
 If any calculations are required (e.g. cross section times integrated luminosity, etc), do them in the code so the user can update things as they wish.
 
+It is not uncommon for a user to ask for a MC sample to be scaled by x10 or similar. Make sure to put the scale factor in the legend entry for that sample.
+
 ### MC Event Weight
 
 This is encoded on the `EventInfo` object (there is only one), and it is the first `mcEventWeight`:
@@ -264,7 +266,21 @@ query = (FuncADLQueryPHYSLITE()
     .Select(lambda e: e.EventInfo("EventInfo").mcEventWeight(0))
 ```
 
-### Crossection Scaling
+### Data
+
+When including data we need to calculate the luminosity of the data we are including and rescale any MC to that. The proper way is not current available in this system. For now, scale the luminosity for a particular run by the number of events you are looking at (you'll have to count the number of events).
+
+The dataset will contain a tag detailing which run you are looking at. We are using an estimate of the number of events - 10^9 per year.
+
+Dataset | Number of Events | Total Luminosity |
+| --- | --- | --- |
+data24_13p6TeV | 1000000000 | 52.4 femto-barns^-1 |
+data22_13p6TeV | 1000000000 | 52.4 femto-barns^-1 |
+data23_13p6TeV | 1000000000 | 52.4 femto-barns^-1 |
+data24_13p6TeV | 1000000000 | 52.4 femto-barns^-1 |
+data25_13p6TeV | 750000000 | 39.3 femto-barns^-1 |
+
+### Cross-section Scaling and MC
 
 Each event in a sample is scaled by a constant scale factor:
 
