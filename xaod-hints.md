@@ -46,158 +46,41 @@ Despite being only a single missing ET for the event, it is stored as a sequence
 
 ## xAOD Tool Access
 
-Lots of things have to be accessed by creating tools.
+Tools are C++ objects used by the framework that is actually extracting the data for servicex. The code is written by the ATLAS experiment. Helper functions, as you'll see below, are created by two methods,
 
-Copy the code below into your source if you are going to use a code. The methods it defines can be used to build in tool access.
+* `make_a_tool` - defines the tool and schedules it to run in the C++ framework during the servicex translation.
+* `make_tool_accessor` defines a small light-weight function in C++ that will return a value from the tool.
+
+These are defined in the `xaod_hints` module if you need to define special tools from user instructions. In many cases you find tool helpers. Examples below show you how to use these functions.
 
 ```python
-from dataclasses import dataclass
-from typing import Callable, Iterable, List, Optional
-from func_adl import ObjectStream
-from func_adl import func_adl_callable
-
-T = TypeVar("T")
-
-
-@dataclass
-class ToolInfo:
-    name: str
-
-
-def make_a_tool(
-    query: ObjectStream[T],
-    tool_name: str,
-    tool_type: str,
-    include_files: Optional[List[str]],
-    init_lines: List[str] = [],
-) -> Tuple[ObjectStream[T], ToolInfo]:
-    """
-    Injects C++ code into the query to initialize a tool of the specified type.
-
-    This function sets up the necessary C++ code to create and initialize a tool (such as
-    BTaggingSelectionTool) in the analysis workflow. The tool will be available in the C++
-    code under the variable name specified by `tool_name`, which can be referenced in
-    initialization lines and later code.
-
-    Args:
-        query: The ObjectStream to attach the tool initialization metadata to.
-        tool_name: The variable name to use for the tool instance in the C++ code.
-        tool_type: The C++ class name of the tool to instantiate.
-        include_files: List of C++ header files to include for the tool.
-        init_lines: List of C++ code lines to run for tool initialization. You can use
-            `{tool_name}` in these lines to refer to the tool variable. You should
-            include the call to `ANA_CHECK({tool_name}->initialize());`.
-
-    Returns:
-        A tuple containing:
-            - The updated ObjectStream with the tool initialization metadata.
-            - A ToolInfo object containing the tool's name. Pass this to `make_tool_accessor`
-    """
-    # Define the C++ for the tool initialization
-
-    query_base = query.MetaData(
-        {
-            "metadata_type": "inject_code",
-            "name": tool_name,
-            "header_includes": include_files,
-            "private_members": [f"{tool_type} *{tool_name};"],
-            "instance_initialization": [
-                f'{tool_name}(new {tool_type} ("{tool_name}"))'
-            ],
-            "initialize_lines": [l.format(tool_name=tool_name) for l in init_lines],
-            "link_libraries": ["xAODBTaggingEfficiencyLib"],
-        }
-    )
-
-    return query_base, ToolInfo(name=tool_name)
-
-
-def make_tool_accessor(
-    t_info: ToolInfo,
-    function_name: str,
-    source_code: List[str],
-    arguments: Iterable[Tuple[str, type]],
-    return_type_cpp: str,
-    return_type_python: str
-):
-    """
-    Creates a Python-callable accessor for a C++ tool in the func_adl query.
-
-    This function generates a Python function that, when called in a func_adl query,
-    injects C++ code to call a method or function on a C++ tool instance (such as
-    BTaggingSelectionTool). The accessor function can be used in the query to access
-    tool functionality as if it were a regular Python function.
-
-    Args:
-        t_info: ToolInfo object containing the tool's variable name.
-        function_name: Name of the accessor function (used in C++ and Python).
-        source_code: List of C++ code lines to execute for the accessor. You can use
-            `{tool_name}` in these lines to refer to the tool variable.
-        arguments: Iterable of (argument_name, type) tuples specifying the arguments
-            for the accessor function.
-        return_type_cpp: The C++ return type of the accessor function.
-        return_type_python: The Python return type annotation as a string.
-
-    Returns:
-        A Python function that can be used in a func_adl query to access the tool.
-        NOTE: YOU MUST use the same name as `function_name` to store this:
-
-            `my_name = make_tool_accessor(.., function_name="my_name", ...)`
-    """
-    # Define the callback function that `func_adl` will use to inject the calling code.
-    def tool_callback(
-        s: ObjectStream[T], a: ast.Call
-    ) -> Tuple[ObjectStream[T], ast.Call]:
-        new_s = s.MetaData(
-            {
-                "metadata_type": "add_cpp_function",
-                "name": function_name,
-                "code": [
-                    "double result;",
-                    *[l.format(tool_name=t_info.name) for l in source_code],
-                ],
-                "result": "result",
-                "include_files": [],
-                "arguments": [a[0] for a in arguments],
-                "return_type": return_type_cpp,
-            }
-        )
-        return new_s, a
-
-    # Build a function type-shed that tells `func_adl` what the function signature is.
-    # This is used to generate the correct C++ code for the function.
-    def tool_call(**arg_dict):
-        """
-        NOTE: This is a dummy function that injects C++ into the object stream to do the
-        actual work.
-        """
-        ...
-    tool_call.__name__ = function_name
-    tool_call.__annotations__['return'] = eval(return_type_python)
-
-    return func_adl_callable(tool_callback)(tool_call)
 ```
 
 ### BTaggingSelectionTool: getting jet b-tagging results
 
-Use the `BTaggingSelectionTool` tool to get either a tag weight/discriminant for b-or-charm tagging or to see if a jet is "tagged" for a particular working point (e.g. passed an experiment defined threshold). These are provided by the FTAG group in ATLAS.
+The `BTaggingSelectionTool` tool to get either a tag weight/discriminant for b-or-charm tagging or to see if a jet is "tagged" for a particular working point (e.g. passed an experiment defined threshold). The working points are provided by the FTAG group in ATLAS.
 
-Operating Point Info:
+Working Point Info:
 
-Operating points define different b-tagging efficiency and light/charm rejection.
+Working points define different b-tagging efficiency and light/charm rejection.
 
-* Known operating point names: `FixedCutBEff_65`, `FixedCutBEff_70`, `FixedCutBEff_77`, `FixedCutBEff_85`, `FixedCutBEff_90`
+* Working point names: `FixedCutBEff_65`, `FixedCutBEff_70`, `FixedCutBEff_77`, `FixedCutBEff_85`, `FixedCutBEff_90`
 * [Further information for user](https://ftag.docs.cern.ch/recommendations/algs/r22-preliminary/#gn2v01-b-tagging)
 * By default choose the `FixedCutBEff_77` working point.
 * Make sure to let the user know what operating point in your text explanation.
 
-Make sure the `tool_name` is different if you need to define multiple tools (because user needs more than one operating point)! Name them something reasonable so the code makes sense!
+To define the tool you must:
 
-Make sure to copy in the code block shown in the section above `xAOD Tool Access`.
+```python
+query = FuncADLQueryPHYSLITE()
+
+
+Make sure the `tool_name` is different if you need to define multiple tools (because user needs more than one operating point)! Name them something reasonable so the code makes sense!
 
 ```python
 # Specific for the below code
 from func_adl_servicex_xaodr25.xAOD.jet_v1 import Jet_v1
+from xaod_hints import make_a_tool, make_tool_accessor
 
 # Define the tool
 query_base, tag_tool_info = make_a_tool(
