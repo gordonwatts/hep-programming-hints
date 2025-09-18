@@ -6,7 +6,7 @@ Fetching data is two steps. First, construct a query. Second, execute the query 
 
 Notes:
 
-* Moving data out of ServiceX and into awkward arrays is expensive. If there is something you can do to reduce the amount of data out of ServiceX it is worth doing it. For example, if you know that you'll never use jets with less than 40 GeV, you can filter jets at the ServiceX level.
+* Moving data out of ServiceX is expensive. If there is something you can do to reduce the amount of data out of ServiceX it is worth doing it. For example, if you know that you'll never use jets with less than 40 GeV, you can filter jets at the ServiceX level.
 * Quantities returned from servicex should be in units most people use at the LHC - GeV, meters, etc. Please convert from whatever the units of the input files are.
 
 ## A Simple Full Example
@@ -91,7 +91,7 @@ Notes:
 
 * If you have flattened a variable like this, you'll get an unnested array.
 
-*(The above returns an Awkward Array of jet $p_T$ values under the key `pt`.)*
+*(The above returns an Array of jet $p_T$ values under the key `pt`.)*
 
 ## Selecting Nested Data per Event
 
@@ -123,7 +123,7 @@ query = jets_per_event.Select(lambda jets: jets.Select(lambda j:  # WILL NOT WOR
 
 Nor can you have nested dictionaries.
 
-*Each event in the resulting Awkward Array has a list of events, each with a list of jet $p_T$ and $\eta$ values.*
+*Each event in the resulting Array has a list of events, each with a list of jet $p_T$ and $\eta$ values.*
 
 ## Filtering Objects in a Query
 
@@ -177,7 +177,7 @@ query = (FuncADLQueryPHYSLITE()
     })
 ```
 
-*Here `pairs.ele` and `pairs.mu` refer to the Electron and Muon lists respectively. The result contains four Awkward Array fields: electron $p_T$, electron $\eta$, muon $p_T$, muon $\eta$ for each event.*
+*Here `pairs.ele` and `pairs.mu` refer to the Electron and Muon lists respectively. The result contains four Array fields: electron $p_T$, electron $\eta$, muon $p_T$, muon $\eta$ for each event.*
 
 Filtering objects is often most easily done at this level as well, as it means putting the filter in only once:
 
