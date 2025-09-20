@@ -6,7 +6,7 @@ Fetching data is two steps. First, construct a query. Second, execute the query 
 
 Notes:
 
-* Moving data out of ServiceX and into awkward arrays is expensive. If there is something you can do to reduce the amount of data out of ServiceX it is worth doing it. For example, if you know that you'll never use jets with less than 40 GeV, you can filter jets at the ServiceX level.
+* Moving data out of ServiceX is expensive. If there is something you can do to reduce the amount of data out of ServiceX it is worth doing it. For example, if you know that you'll never use jets with less than 40 GeV, you can filter jets at the ServiceX level.
 * Quantities returned from servicex should be in units most people use at the LHC - GeV, meters, etc. Please convert from whatever the units of the input files are.
 
 ## A Simple Full Example
@@ -15,7 +15,6 @@ This example fetches the jet $p_T$'s from a PHYSLITE formatted xAOD data sample 
 
 ```python
 from func_adl_servicex_xaodr25 import FuncADLQueryPHYSLITE
-from servicex_analysis_utils import to_awk
 from servicex import deliver, ServiceXSpec, Sample, dataset
 
 # The base query should run against PHYSLITE.
@@ -33,35 +32,30 @@ jet_pts_query = (base_query
 # Define the rucio dataset identifier (DID).
 ds_name = ("mc23_13p6TeV:mc23_13p6TeV.801167.Py8EG_A14NNPDF23LO_jj_JZ2.deriv.DAOD_PHYSLITE.e8514_e8528_a911_s4114_r15224_r15225_p6697")
 
-all_jet_pts = to_awk(
-    deliver(
-        ServiceXSpec(
-            Sample=[
-                Sample(
-                    Name="jet_pt_fetch",
-                    Dataset=dataset.Rucio(ds_name),
-                    NFiles=1,
-                    Query=jet_pts_query,
-                )
-            ]
-        ),
-    )
+all_jet_pts_delivered = deliver(
+    ServiceXSpec(
+        Sample=[
+            Sample(
+                Name="jet_pt_fetch",
+                Dataset=dataset.Rucio(ds_name),
+                NFiles=1,
+                Query=jet_pts_query,
+            )
+        ]
+    ),
 )
-
-data = all_jet_pts["jet_pt_fetch"]
 ```
 
-`all_jet_pts` is a dictionary indexed by the `Sample` `Name`. And `all_jet_pts["jet_pt_fetch"].jet_pt` is a awkward array of jets $p_T$'s.
+`all_jet_pts` is a dictionary indexed by the `Sample` `Name`. It contains points to one or more root files that contain the data from each `Sample`.
 
-Make sure to copy over the dataset name the user has requested into `ds_name` carefully! If it isn't right then ServiceX fails with a odd error.
+Make sure to copy over the dataset name the user has requested into `ds_name` carefully! If it isn't right then ServiceX fails with a odd error!
 
 ## The `deliver` function
 
 * Always use `NFiles=1` as above, even if the user asks otherwise. If they do, tell them they can run it themselves when they are ready!
 * The query can be re-used.
 * Use `dataset.Rucio` for a `rucio` dataset, use `dataset.FileList` for a list of web accessible datasets (via `https` or `xrootd://`)
-* Only call deliver once - make sure all the data you want is in the query.
-* Do not accept a query that requires multiple datasets.
+* Only call deliver once - make sure all the data you want is in the query, even if multiple samples.
 
 ## Queries
 
@@ -91,7 +85,7 @@ Notes:
 
 * If you have flattened a variable like this, you'll get an unnested array.
 
-*(The above returns an Awkward Array of jet $p_T$ values under the key `pt`.)*
+*(The above returns an Array of jet $p_T$ values under the key `pt`.)*
 
 ## Selecting Nested Data per Event
 
@@ -123,7 +117,7 @@ query = jets_per_event.Select(lambda jets: jets.Select(lambda j:  # WILL NOT WOR
 
 Nor can you have nested dictionaries.
 
-*Each event in the resulting Awkward Array has a list of events, each with a list of jet $p_T$ and $\eta$ values.*
+*Each event in the resulting Array has a list of events, each with a list of jet $p_T$ and $\eta$ values.*
 
 ## Filtering Objects in a Query
 
@@ -177,7 +171,7 @@ query = (FuncADLQueryPHYSLITE()
     })
 ```
 
-*Here `pairs.ele` and `pairs.mu` refer to the Electron and Muon lists respectively. The result contains four Awkward Array fields: electron $p_T$, electron $\eta$, muon $p_T$, muon $\eta$ for each event.*
+*Here `pairs.ele` and `pairs.mu` refer to the Electron and Muon lists respectively. The result contains four Array fields: electron $p_T$, electron $\eta$, muon $p_T$, muon $\eta$ for each event.*
 
 Filtering objects is often most easily done at this level as well, as it means putting the filter in only once:
 
