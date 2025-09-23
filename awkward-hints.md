@@ -6,7 +6,7 @@ As a general theme - it is always better to filter data early rather than wait u
 
 ## Flattening Nested Arrays
 
-Use **`ak.flatten`** to reduce nested list structure. By default, `ak.flatten(array)` removes one level of nesting (flattens along the axis=1). Setting `axis=None` will completely flatten an array, erasing all nesting (turning it into 1D):
+Use **`ak.flatten`** to reduce nested list structure. By default, `ak.flatten(array, axis=1)` removes one level of nesting (flattens along the axis=1). Setting `axis=None` will completely flatten an array, erasing all nesting (turning it into 1D):
 
 ```python
 import awkward as ak
@@ -22,7 +22,7 @@ print(flat_all)     # [0, 1, 2, 3, 4, 5, 6, 7]  (same here because only one leve
 Notes:
 
 - Always explicitly set the `axis` in the arguments to `flatten`. This will force us to think about what axis we are flattening and if the data has that access.
-- If a variable has no array structure or is a 1D array, then `ak.flatten` will cause an error. Be sure your data has the requested `axis` if you are going to flatten.
+- If a variable has no array structure or is a 1D array, then `ak.flatten` with `axis=1` (the default) will cause an error. Be sure your data has the requested `axis` if you are going to flatten.
 
 ## Combining Multiple Fields into Records
 
