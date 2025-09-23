@@ -23,6 +23,8 @@ The `Var` method in the Hist API creates a variable-width binned axis for your h
 
 Labels can contains `LaTeX` (and should for `eta` ($\eta$) and `pt` ($p_{T}$)). If you are using a f-string or `str.format(...)` that the curly LaTeX braces must be escaped. Make sure you surround the math symbols with `$`!!
 
+The `.Int64()` says that each bin should have a 64 bit counter. You *MUST* put in a `Int64()` or a `Weight()` (see below), or you'll get a `AttributeError: 'ConstructProxy' object has no attribute 'fill'`
+
 ## Filling a histogram with data
 
 ```python
