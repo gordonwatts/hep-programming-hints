@@ -19,3 +19,12 @@ When you do have to declare C++ functions (with `ROOT.gInterpreter.Declare`) try
 
 * `<source>.Define("new_leaf_name", "old_leaf1 + old_leaf2*2.0")` - C++ JIT expression (preferred way - efficient).
 * `<source>.Define("new_leaf_name", f"old_leaf*{scale_factor}")` - Inject a value calculated in python into the calculation
+
+## Weights
+
+Lets say you have a per-event weight called `weight` stored in the tree. You want to use it to weight your histogram:
+
+```python
+hist_def = ("met_hist", "Missing ET (weighted);MET [GeV];Events", 100, 0.0, 1000.0)
+hist = <source>.Histo1D(hist_def, "met", "weight")
+```
