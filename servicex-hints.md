@@ -46,7 +46,7 @@ all_jet_pts_delivered = deliver(
 )
 ```
 
-`all_jet_pts` is a dictionary indexed by the `Sample` `Name`. It contains points to one or more root files that contain the data from each `Sample`.
+`all_jet_pts` is a dictionary indexed by the `Sample` `Name`. The target of each is (always) a `GuardList` (which obeys the rules of `typing.Sequence` - indexing and iteration).
 
 Make sure to copy over the dataset name the user has requested into `ds_name` carefully! If it isn't right then ServiceX fails with a odd error!
 
