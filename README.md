@@ -19,10 +19,38 @@ Model Context Protocol (MCP) is a standard for providing contextual information 
 - Python 3.10 or higher
 - [uv](https://github.com/astral-sh/uv) package manager (recommended)
 - An MCP-compatible client (e.g., Claude Desktop, Claude Code, or other MCP clients)
+- Docker (optional, for containerized deployment)
 
 ## Installation
 
-### MCP Server Setup
+### Option 1: Docker (Recommended for Production)
+
+The easiest way to run the MCP server is using Docker:
+
+1. Build the Docker image:
+   ```bash
+   docker build -t hep-programming-hints .
+   ```
+
+2. Run the container with your authentication token:
+   ```bash
+   docker run -d \
+     -p 8080:8080 \
+     -e TOKEN="your-secret-token-here" \
+     --name hep-hints-server \
+     hep-programming-hints
+   ```
+
+3. Verify the server is running:
+   ```bash
+   curl http://localhost:8080/health
+   ```
+
+**Note:** The `TOKEN` environment variable is required for server authentication. Generate a secure token and keep it secret.
+
+### Option 2: Local Installation
+
+#### MCP Server Setup
 
 The MCP server itself only requires fastMCP and does not need the HEP analysis libraries installed.
 
@@ -74,6 +102,12 @@ Or use the existing `hep_venv` directory if already configured.
 
 ## Running the MCP Server
 
+### Using Docker
+
+See the Docker installation section above for running the server in a container.
+
+### Using MCP Client Configuration
+
 The MCP server is configured via the `config.json` file. To use it with an MCP client:
 
 1. Reference this project in your MCP client configuration
@@ -109,6 +143,20 @@ Or if using a standard Python installation:
   }
 }
 ```
+
+### Running Standalone Server
+
+To run the server directly with HTTP transport:
+
+```bash
+# Set the TOKEN environment variable
+export TOKEN="your-secret-token-here"
+
+# Run the server
+python -m hep_programming.server
+```
+
+The server will start on `http://127.0.0.1:8080`.
 
 ## Running Example Scripts
 
@@ -153,12 +201,61 @@ The `config.json` specifies the analysis environment requirements:
 
 These libraries are **not** required for the MCP server itself, only for running the actual analysis code.
 
+## Docker Configuration
+
+### Environment Variables
+
+- `TOKEN` (required): Authentication token for accessing the MCP server
+
+### Ports
+
+- `8080`: HTTP server port
+
+### Building Custom Images
+
+You can customize the Dockerfile to:
+- Use different Python versions (change the base image)
+- Add additional dependencies
+- Modify server configuration
+
+Example with custom token during build:
+```bash
+docker build --build-arg DEFAULT_TOKEN=your-token -t hep-programming-hints .
+```
+
+### Docker Compose
+
+For easier deployment, you can use Docker Compose:
+
+```yaml
+version: '3.8'
+
+services:
+  hep-hints:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - TOKEN=${TOKEN}
+    restart: unless-stopped
+```
+
+Run with:
+```bash
+TOKEN=your-secret-token docker-compose up -d
+```
+
 ## Project Structure
 
 ```
 .
 ├── hints/              # Markdown hint files for various libraries
 ├── prompts/            # Prompt templates for custom agents
+├── hep_programming/    # MCP server implementation
+│   ├── __init__.py
+│   ├── server.py       # Main server code
+│   └── README.md
+├── Dockerfile          # Docker configuration
 ├── config.json         # MCP server configuration
 ├── pyproject.toml      # MCP server dependencies (fastMCP only)
 ├── jet_pt_plot.py      # Example analysis script
@@ -182,6 +279,19 @@ uv pip install -e ".[dev]"
 fastmcp --version
 ```
 
+### Verify Docker Deployment
+
+```bash
+# Check if container is running
+docker ps | grep hep-hints
+
+# Check logs
+docker logs hep-hints-server
+
+# Test health endpoint
+curl http://localhost:8080/health
+```
+
 ### Verify Analysis Environment (if installed)
 
 ```bash
@@ -194,6 +304,13 @@ servicex codegen list
 python -c "import awkward, matplotlib.pyplot, numpy, servicex, func_adl_servicex_xaodr25; print('All core dependencies imported successfully')"
 ```
 
+## Security Notes
+
+- **Always use a strong, randomly generated TOKEN** for production deployments
+- Never commit tokens to version control
+- Consider using Docker secrets or environment variable management tools for production
+- The server runs on HTTP by default; for production use, consider adding TLS/HTTPS via a reverse proxy
+
 ## Contributing
 
 Contributions are welcome! When adding new hint files or updating dependencies:
@@ -202,6 +319,7 @@ Contributions are welcome! When adding new hint files or updating dependencies:
 3. Update `pyproject.toml` only for MCP server dependencies
 4. Analysis library requirements should be documented in `config.json`
 5. Use `uv` to manage dependencies
+6. Test Docker builds with `docker build -t hep-programming-hints .`
 
 ## License
 
