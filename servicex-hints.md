@@ -6,7 +6,7 @@ Fetching data is two steps. First, construct a query. Second, execute the query 
 
 Notes:
 
-* Moving data out of ServiceX is expensive. If there is something you can do to reduce the amount of data out of ServiceX it is worth doing it. For example, if you know that you'll never use jets with less than 40 GeV, you can filter jets at the ServiceX level.
+* Moving data out of ServiceX is expensive. If there is something you can do to reduce the amount of data out of ServiceX it is worth doing it. For example, if you know that you'll never use jets with less than 40 GeV, you can filter jets at the ServiceX level using a `Where` call.
 * Quantities returned from servicex should be in units most people use at the LHC - GeV, meters, etc. Please convert from whatever the units of the input files are.
 
 ## A Simple Full Example
@@ -22,8 +22,9 @@ base_query = FuncADLQueryPHYSLITE()
 
 # Query: get all jet pT
 jet_pts_query = (base_query
-    .SelectMany(lambda evt: evt.Jets())
-    .Select(lambda jet: {
+    .Select(lambda evt: evt.Jets())
+    .Select(lambda jets: jets.Select(lambda jet:
+    {
         "jet_pt": jet.pt() / 1000.0,
     })
 )
@@ -46,16 +47,21 @@ all_jet_pts_delivered = deliver(
 )
 ```
 
-`all_jet_pts` is a dictionary indexed by the `Sample` `Name`. The target of each is (always) a `GuardList` (which obeys the rules of `typing.Sequence` - indexing and iteration).
+* `all_jet_pts_delivered` is a dictionary indexed by sample name. It contains a list of `awkward` arrays (in the form of a `GuardList`).
 
-Make sure to copy over the dataset name the user has requested into `ds_name` carefully! If it isn't right then ServiceX fails with a odd error!
+The following code can be used to access the jet pt's from the above example. Note the `jet_pt` for the column name is the same as in the `servicex` query. The jets are an awkward nested array of floats (array of jets in each event).
+
+```python
+jet_pt_fetch = akk_jet_pts_delivered["jet_pt_fetch"]
+jet_pts = jet_pt_fetch.jet_pt
+```
 
 ## The `deliver` function
 
-* Always use `NFiles=1` as above, even if the user asks otherwise. If they do, tell them they can run it themselves when they are ready!
+* Always use `NFiles=1` as above, even if the user asks otherwise. If they do, tell them they can run it themselves when they are ready! More files and it takes to long!
 * The query can be re-used.
 * Use `dataset.Rucio` for a `rucio` dataset, use `dataset.FileList` for a list of web accessible datasets (via `https` or `xrootd://`)
-* Only call deliver once - make sure all the data you want is in the query, even if multiple samples.
+* Only call deliver once - make sure all the data you want is in the query, even if multiple samples - just add more to the `Sample` array.
 
 ## Queries
 
@@ -70,22 +76,6 @@ The `base_query` is a sequence of events. Each event contains collections of obj
 The last `Select` must create a dictionary (one or more `Where`'s can be after that `Select`). Each element of the dictionary is a value, or a list of values. `func_adl` does not support nested objects of any sort: not even 2D arrays. Each element of the dictionary can be a value or a 1D list. Do not try to fetch a list of muons, where each muon is `pt, eta, phi, E`. Instead, fetch `mu_pt, mu_eta, mu_phi, mu_E`.
 
 `ServiceX` queries can not contain references to `awkward` functions. Instead, use `Select`, `Where`, to effect the same operations.
-
-## Selecting a Flat Variable (Jet $p_T$)
-
-Use `SelectMany` to flatten jets across all events, then `Select` to get each jet’s transverse momentum. This yields a flat list of jet $p_T$ values (in GeV) from all events.
-
-```python
-query = FuncADLQueryPHYS() \
-    .SelectMany(lambda e: e.Jets()) \
-    .Select(lambda j: {"pt": j.pt() / 1000.0'})
-```
-
-Notes:
-
-* If you have flattened a variable like this, you'll get an unnested array.
-
-*(The above returns an Array of jet $p_T$ values under the key `pt`.)*
 
 ## Selecting Nested Data per Event
 
@@ -102,20 +92,7 @@ query = jets_per_event.Select(lambda jets:
     })
 ```
 
-You cannot nest the selection: the following will not work:
-
-```python
-# Example of what not to do
-source = FuncADLQueryPHYSLITE()
-jets_per_event = source.Select(lambda e: e.Jets())
-query = jets_per_event.Select(lambda jets: jets.Select(lambda j:  # WILL NOT WORK
-    {
-        "pt": j.pt()/1000.0,  # WILL NOT WORK
-        "eta": j: j.eta(),  # WILL NOT WORK
-    }))
-```
-
-Nor can you have nested dictionaries.
+You cannot nest the final dictionary `Select` statement. It must be at the top query level as shown above.
 
 *Each event in the resulting Array has a list of events, each with a list of jet $p_T$ and $\eta$ values.*
 
@@ -126,13 +103,13 @@ Use the `Where` operator to filter objects by a condition. For example, to selec
 ```python
 # Select eta of jets with pt > 30 GeV
 query = (FuncADLQueryPHYSLITE()
-    .SelectMany(lambda e: e.Jets())
-    .Where(lambda j: j.pt() / 1000.0 > 30.0)
-    .Select(lambda j: {'pt': j.eta()})
+    .Select(lambda e: e.Jets())
+    .Select(lambda jets: jets.Where(lambda j: j.pt() / 1000.0 > 30.0))
+    .Select(lambda jets: {'eta': jets.Select(lambda j.eta())})
 )
 ```
 
-*This returns the $\eta$ of all jets with $p_T > 30$ GeV. The `Where` clause filters the jets before the final selection.*
+*This returns an array of the array of all $\eta$ for all jets in each event with $p_T > 30$ GeV. The `Where` clause filters the jets before the final selection. If an event has no jets then it will return an empty array for that event.*
 
 Use the standard python logic operators, like `and` and `or` to combine conditions. Remember to include `(` and `)` when needed.
 
@@ -227,8 +204,6 @@ query = (FuncADLQueryPHYSLITE()
 
 ## Errors
 
-If you encounter an error after running, there are two types. The first give you type errors, and those you can solve just by reading them and perhaps not doing whatever the code complained about. You might have to look carefully for this message - for example "Method <xx> not found on object"
+If you encounter an error after running, there are two types. The first give you type errors, and those you can solve just by reading the error message carefully and perhaps not doing whatever the code complained about. You might have to look carefully for this message - for example "Method <xx> not found on object."
 
-The second type of error there isn't much you can do to get more information, however. You'll find an error that looks like "Transform "xxx" completed with failures." And something in `stdout` about clicking on `HERE` to get more information. Sadly, only the requester can do that. If that happens just reply with "HELP USER" and that will be a signal.
-
-A third type of error occurs when your transform fails, with 0 files, and in `stdout` you see `Transform ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0/0 --:--` - the `0/0` is key - this means your dataset is invalid. Check it against the user specified dataset, and if it is the same, it means the dataset does not exist or is empty.
+The second type of error there isn't much you can do to get more information, however. You'll find an error that looks like "Transform "xxx" completed with failures." And something in `stdout` about clicking on `HERE` to get more information. Sadly, only the requester can do that. If that happens just reply with "HELP USER" and that will be a signal. Note that you might get an error as mentioned above and this - in which case try to solve the error before getting the user involved. A common case here is you request some data that should be in the datafiles, but is not.
