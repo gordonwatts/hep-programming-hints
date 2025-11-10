@@ -29,6 +29,7 @@ Best practice (details below):
 Notes:
 
 - Quantities returned from servicex should be in units most people use at the LHC - GeV, meters, etc. Please convert from whatever the units of the input files are in.
+- NEVER nest a dictionary inside another dictionary. That will for sure cause a servicex crash.
 
 ## A Simple Full Example
 
