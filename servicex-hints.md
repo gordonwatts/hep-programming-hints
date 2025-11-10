@@ -7,9 +7,10 @@ Best practice (details below):
 1. Define your `base_query`
 2. Select the collections you need (jets, electrons)
 
-    - Apply selections at the object level if need be (using a nested `.Where`). This is important as it can dramatically reduce the amount of data that needs to be shipped out of ServiceX.
     - This should be a top level `Select`
     - Select all the collections you need - do not make separate queries.
+    - Include singletons (like met or EventInfo) - you have to extract them at this level to use later.
+    - Apply selections at the object level if need be (using a nested `.Where`). This is important as it can dramatically reduce the amount of data that needs to be shipped out of ServiceX.
     - Do not select the columns (like pt, eta, etc.) at this stage. Do that at the next stage.
 
 3. Apply any event level selections needed
@@ -17,6 +18,7 @@ Best practice (details below):
     - Use a top level `.Where` to do this.
     - For example, only events with at least 2 jets.
     - This is important as it can dramatically reduce the amount of data that needs to be shipped out of ServiceX.
+    - You can't go back to the root event object from step 2 here - you can only reference what you defined in step 2.
 
 4. Select the items from the collections that need to be sent to the client. The jet pT or eta, MET.
 
