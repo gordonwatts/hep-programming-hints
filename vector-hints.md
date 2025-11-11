@@ -1,13 +1,12 @@
 # Scikit-HEP Vector Library – Complex Usage Snippets
 
-The **vector** library allows you to do 4-vector operations, transformation, calculations (like `deltaR`) easily and efficiently. For these operations do not write your own code - instead create an awkward array with the appropriate vector behavior, and then use the `vector` methods to do the calculation.
+The **vector** library allows you to do 4-vector operations, transformation, calculations (like `deltaR`). For these operations do not write your own code.
 
 ## Registering Awkward Behavior for Vector
 
 Use `vector.register_awkward()` to load Vector’s Awkward Array behaviors so that any Awkward records named `"Vector2D"`, `"Vector3D"`, `"Vector4D"`, or `"Momentum4D"` (etc.) with recognized field names get Vector properties and methods. This should be done at the start of your session/script.
 
 ```python
-import awkward as ak
 import vector
 vector.register_awkward()  # Enable Vector methods on Awkward arrays:contentReference[oaicite:2]{index=2}
 ```
@@ -29,7 +28,7 @@ events = ak.Array({
 # 'events["electron"]' is now an array of Momentum4D vectors with pt, eta, phi, mass:contentReference[oaicite:4]{index=4}
 ```
 
-Use the `3D` spatial vector (`Momentum3D`) if you only need 3-vector operations (e.g. `deltaR`), and `4D` Lorentz vectors (`Momentum4D`) if you need to calculate something like an invariant mass.
+Use the `3D` spatial vector (`Momentum3D`) if you only need 3-vector operations (e.g. `deltaR`), and `4D` Lorentz vectors (`Momentum4D`) if you need to calculate something like an invariant mass. `Momentum4D` and others pick up on default names (like `px`, `py`, or `pt`, `eta`).
 
 ## Accessing Vector Components and Properties
 
@@ -44,7 +43,7 @@ particles.mass  # invariant mass (for Momentum4D, alias for proper time tau)
 
 ## Calculating ΔR between Two Collections of Particles
 
-The Vector library provides a `deltaR` method to compute the separation \$\Delta R = \sqrt{\Delta\phi^2 + \Delta\eta^2}\$ between two vectors. For example, to calculate ΔR between every electron and muon in the same event (assuming `events.electron` and `events.muon` are Momentum4D Awkward arrays), first form all pair combinations with `ak.cartesian`, then call `deltaR`:
+The Vector library provides a `deltaR` method to compute the separation \$\Delta R = \sqrt{\Delta\phi^2 + \Delta\eta^2}\$ between two vectors. For example, to calculate ΔR between every electron and muon in the same event (assuming `events.electron` and `events.muon` are Momentum4D Awkward arrays), first form all pair combinations with `ak.cartesian` or `ak.combinations`, then call `deltaR`:
 
 ```python
 # events.electron and events.muon are both awkward arrays with the `Momentum3D` behavior.
@@ -55,7 +54,7 @@ dR = electrons.deltaR(muons)  # ΔR for each electron-muon pair:contentReference
 
 Each entry in `dR` is an array of ΔR values for the corresponding event’s electron–muon pairs.
 
-The `.deltaR` can only be applied to awkward arrays behaving as 3D or 4D vectors!!
+The `.deltaR` can only be applied to awkward arrays behaving as 3D or 4D vectors, and of the same length!
 
 ## Combining Lorentz Vectors and Invariant Mass
 
@@ -70,7 +69,7 @@ Here `first_e + second_e` produces a Momentum4D sum for each pair, and `.mass` g
 
 ## Boosting Lorentz Vectors to a Different Frame
 
-The `boostCM_of_p4` method boosts a Lorentz vector to the center-of-mass frame of a given 4-vector. For example, to boost two decay products into their parent’s rest frame, first sum them to get the parent momentum, then boost each:
+The `boostCM_of_p4` method boosts a Lorentz vector to the center-of-mass frame of a given 4-vector.
 
 ```python
 parent = particle1 + particle2
