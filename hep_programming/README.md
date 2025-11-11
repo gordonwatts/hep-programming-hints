@@ -7,50 +7,53 @@ This package provides an MCP (Model Context Protocol) server for HEP programming
 - `__init__.py` - Package initialization, exports the FastMCP app
 - `server.py` - MCP server implementation with tools for accessing HEP programming hints
 
-## MCP Tools
+## Helm Deployment
 
-The server provides the following tools:
+The application can be deployed to Kubernetes using the Helm chart located in the `helm/hep-programming-hints/` directory.
 
-1. **get_hint(library: str)** - Get programming hints for a specific HEP library
-   - Supports: awkward, hist, servicex, vector, xaod, and more
-   
-2. **list_available_hints()** - List all available hint files
-
-3. **get_plan(task_type: str)** - Get planning guides for specific tasks
-   - Supports: plot, awkward, hist, servicex
-   
-4. **search_hints(keyword: str)** - Search for keywords across all hint files
-
-## Running the Server
+### Installation
 
 ```bash
-# Using the installed script
-hep-programming-server
-
-# Or directly with Python
-python -m hep_programming.server
-
-# Or programmatically
-from hep_programming import app
-app.run()
+helm install hep-programming-hints ./helm/hep-programming-hints/
 ```
 
-## Using with MCP Clients
+### Configuration
 
-Add to your MCP client configuration (e.g., Claude Desktop):
+The following table lists the configurable parameters in `values.yaml`:
 
-```json
-{
-  "mcpServers": {
-    "hep-hints": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/path/to/hep-programming-hints",
-        "run",
-        "hep-programming-server"
-      ]
-    }
-  }
-}
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `replicaCount` | Number of replicas to deploy | `1` |
+| `image.repository` | Container image repository | `sslhep/hep-programming-hints` |
+| `image.pullPolicy` | Image pull policy | `IfNotPresent` |
+| `image.tag` | Container image tag | `dev` |
+| `nameOverride` | Override the chart name | `""` |
+| `fullnameOverride` | Override the full resource names | `""` |
+| `podAnnotations` | Annotations to add to pods | `{}` |
+| `podSecurityContext` | Security context for pods | `{}` |
+| `securityContext` | Security context for containers | `{}` |
+| `service.type` | Kubernetes service type | `ClusterIP` |
+| `service.port` | Service port | `8080` |
+| `ingress.enabled` | Enable ingress resource | `true` |
+| `ingress.className` | Ingress class name | `""` |
+| `ingress.annotations` | Ingress annotations | `{}` |
+| `ingress.hosts` | Ingress host configuration | `[{host: hep-programming-hints.local, paths: [{path: /, pathType: Prefix}]}]` |
+| `ingress.tls` | Ingress TLS configuration | `[]` |
+| `resources` | CPU/Memory resource requests/limits | `{}` |
+| `autoscaling.enabled` | Enable horizontal pod autoscaling | `false` |
+| `autoscaling.minReplicas` | Minimum number of replicas | `1` |
+| `autoscaling.maxReplicas` | Maximum number of replicas | `100` |
+| `autoscaling.targetCPUUtilizationPercentage` | Target CPU utilization for autoscaling | `80` |
+| `nodeSelector` | Node labels for pod assignment | `{}` |
+| `tolerations` | Pod tolerations | `[]` |
+| `affinity` | Pod affinity rules | `{}` |
+| `secret.token` | Authentication token (stored as secret) | `""` |
+
+### Example: Custom Installation
+
+```bash
+helm install hep-programming-hints ./helm/hep-programming-hints/ \
+  --set image.tag=latest \
+  --set replicaCount=3 \
+  --set ingress.hosts[0].host=hints.example.com
 ```

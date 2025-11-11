@@ -46,3 +46,6 @@ Thumbs.db
 
 # Backup files
 *.bak
+
+# Local helm deploymet values
+local-values.yaml

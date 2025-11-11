@@ -7,13 +7,12 @@ for accessing programming hints about HEP analysis libraries.
 
 import os
 from pathlib import Path
-from typing import Optional
 
 from fastmcp import FastMCP
 
 from fastmcp.server.auth.providers.jwt import StaticTokenVerifier
 
-assert "TOKEN" in os.environ, "Token needed for StaticTokenVerifer to control access to server"
+assert "TOKEN" in os.environ, "Token needed for StaticTokenVerifier to control access to server"
 # Define development tokens and their associated claims
 verifier = StaticTokenVerifier(
     tokens={
@@ -36,7 +35,7 @@ def hep_coding_guidelines():
     """
     Provide high level context for generating HEP plots
     """
-    hint_file = "AGENTS.md"
+    hint_file = HINTS_DIR / "general.md"
     return hint_file.read_text()
 
 @app.tool()
@@ -107,37 +106,6 @@ def list_available_hints() -> str:
         result.append(f"  - {name}")
 
     return "\n".join(result)
-
-
-@app.tool()
-def get_plan(task_type: str) -> str:
-    """
-    Get a planning guide for a specific task type.
-
-    Args:
-        task_type: The type of task (e.g., 'plot', 'awkward', 'hist', 'servicex')
-
-    Returns:
-        The content of the planning guide for the requested task
-
-    Raises:
-        FileNotFoundError: If the planning guide doesn't exist
-    """
-    # Normalize task type
-    task_lower = task_type.lower()
-
-    # Try to find the plan file
-    plan_file = HINTS_DIR / f"plan-{task_lower}.md"
-
-    if not plan_file.exists():
-        available_plans = [f.stem.replace("plan-", "") for f in HINTS_DIR.glob("plan-*.md")]
-        raise FileNotFoundError(
-            f"No planning guide found for '{task_type}'. "
-            f"Available plans: {', '.join(sorted(available_plans))}"
-        )
-
-    return plan_file.read_text()
-
 
 @app.tool()
 def search_hints(keyword: str) -> str:
