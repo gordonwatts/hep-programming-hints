@@ -94,7 +94,7 @@ array = ak.Array([[7, 5, 7], [], [2], [8, 2]])
 max_values = ak.argmax(array, axis=1, keepdims=True)
 print(max_values) # prints out "[[0], [None], [0], [0]]"
 print(array[max_values]) # prints out "[[7], [None], [2], [8]]"
-print(ak.flatten(array[max_values])) # prints out "[7, None, 2, 8]"
+print(ak.flatten(array[max_values], axis=0)) # prints out "[7, None, 2, 8]"
 ```
 
 Note the `keepdims=True` - that makes sure you get that nested list, "[[0], [None], [0], [0]]", which can be correctly used for slicing.
@@ -123,7 +123,7 @@ print(flat_all)     # [0, 1, 2, 3, 4, 5, 6, 7]  (same here because only one leve
 
 Notes:
 
-- Always explicitly set the `axis` in the arguments to `flatten`. This will force us to think about what axis we are flattening and if the data has that access.
+- Always *explicitly set the `axis`* in the arguments to `flatten`. This will force us to think about what axis we are flattening and if the data has that access.
 - If a variable has no array structure or is a 1D array, then `ak.flatten` with `axis=1` (the default) will cause an error. Be sure your data has the requested `axis` if you are going to flatten.
 
 ## Numpy Operations that *just work*
