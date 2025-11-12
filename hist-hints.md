@@ -23,7 +23,7 @@ The `Var` method in the Hist API creates a variable-width binned axis for your h
 
 Labels can contains `LaTeX` (and should for `eta` ($\eta$) and `pt` ($p_{T}$)). If you are using a f-string or `str.format(...)` that the curly LaTeX braces must be escaped. Make sure you surround the math symbols with `$`!!
 
-The storage type is either `Int64` or `Weight`. If you are doing just counts in the histogrma, use `.Int64()`. If you are building a weighted histogram (say with mc weights) then use `.Weight()`. You can use only one of the two. Both will result in an error.
+The storage type is either `Int64` or `Weight`. If you are doing just counts in the histogram, use `.Int64()`. If you are building a weighted histogram (say with mc weights) then use `.Weight()`. You can use only one of the two. Do not use both! You'll get an error ("Hist object has no attribute XXX")
 
 ## Filling a histogram with data
 
