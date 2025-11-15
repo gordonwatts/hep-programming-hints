@@ -17,6 +17,7 @@ def make_a_tool(
     tool_name: str,
     tool_type: str,
     include_files: Optional[List[str]],
+    link_libraries: List[str] = [],
     init_lines: List[str] = [],
 ) -> Tuple[ObjectStream[T], ToolInfo]:
     """
@@ -55,7 +56,7 @@ def make_a_tool(
             "initialize_lines": [
                 line.format(tool_name=tool_name) for line in init_lines
             ],
-            "link_libraries": ["xAODBTaggingEfficiencyLib"],
+            "link_libraries": link_libraries,
         }
     )
 

@@ -92,6 +92,7 @@ query_base, tag_tool_info = make_a_tool(
         'ANA_CHECK(asg::setProperty({tool_name}, "OperatingPoint", "FixedCutBEff_77"));',
         "ANA_CHECK({tool_name}->initialize());",
     ],
+    link_libraries=["xAODBTaggingEfficiencyLib"]
 )
 
 # If you need the tag weight. Tag weights, output of a GNN, are between -10 and 15.
