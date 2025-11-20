@@ -93,11 +93,17 @@ Queries have to start from a base, like `FuncADLQueryPHYSLITE`.
 
 - Assume all queries are on Release 25 datasets (the `func_adl_servicex_xaodr25` package)
 - Use `FuncADLQueryPHYSLITE` for ATLAS PHYSLITE samples - that have already had calibrations, etc., applied.
-- Use `FuncADLQueryPHYS` for ATLAS PHYS or other derivations (like LLP1, etc.)
+- Use `FuncADLQueryPHYS` for ATLAS PHYS or other derivations (like LLP1, etc.). These aren't calibrated, so this will try to run calibrations.
 
 The `base_query` is a sequence of events. Each event contains collections of objects like Jets and Electrons. `evt.Jets()` gets you the collection of jets for a particular event. You can pass `calibrated=False` to prevent calibration in `PHYS`, but note that `PHYSLITE` does not have uncalibrated jets (or other objects) in it! This `func_adl` language is based on LINQ.
 
 `ServiceX` queries can not contain references to `awkward` functions. Instead, use `Select`, `Where`, to effect the same operations.
+
+To tell what kind of data you are looking at, scan the name of the dataset:
+
+- If it has PHYSLITE in it, it is PHYSLITE.
+- If it has DAOD_PHYS in it, it is PHYS.
+- If it is OpenData, then it is PHYSLITE. It usually has OpenData in the name somewhere.
 
 ## Filtering in a Query
 
