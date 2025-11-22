@@ -191,3 +191,16 @@ Make sure to do all calculations in the code; don't do the math in your head. Th
 ### Event Scaling and Information on the Plot
 
 When applying this scaling, detail what you are doing in some detail in the notes. On the plot, only put the integrated luminosity you rescaled the MC to (`L=xx $fb^-1$`). Do not mention what scaling was applied, etc., on the plot itself. We want as little possible to detract from the display of the data. If you aren't doing the luminosity rescaling, don't put anything on the plot.
+
+## Class Method - API's
+
+Some classes you might encounter and common methods attached to them:
+
+TLorentzVector:
+
+* Mt(), M() - Transverse and full Mass
+* Et(), E() - Transverse and full Energy
+* Eta(), Phi() - direction coordinates
+* Px(), Py(), Pz() - Momentum Components
+* Pt(), P() - Transverse and full momenta
+* DeltaR(other TLorentzVector) - calculates the Delta R between two TLorentzVectors
