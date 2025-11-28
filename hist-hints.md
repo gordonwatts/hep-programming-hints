@@ -117,7 +117,9 @@ fig.savefig("histogram.png")
 plt.close(fig)
 ```
 
-You can also use `fig.savefig(...)`, of course, if you have the `fig` from making sub plots. `plt.close(fig)` the figure after saving it to a file to free up memory.
+* You can also use `fig.savefig(...)`, of course, if you have the `fig` from making sub plots.
+* `plt.close(fig)` the figure after saving it to a file to free up memory.
+* Do not change the `dpi` with other arguments - just provide the filename argument to `savefig`.
 
 ## Notes
 

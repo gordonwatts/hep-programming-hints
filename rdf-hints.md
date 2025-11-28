@@ -28,3 +28,7 @@ Lets say you have a per-event weight called `weight` stored in the tree. You wan
 hist_def = ("met_hist", "Missing ET (weighted);MET [GeV];Events", 100, 0.0, 1000.0)
 hist = <source>.Histo1D(hist_def, "met", "weight")
 ```
+
+## Other Notes
+
+* When creating the canvas for the plot, `canvas = ROOT.TCanvas("plot-name")`, it is ok to add a name if you want, but do not add any other arguments (for example, the size). Only default sizes should be used for the canvas.
