@@ -127,7 +127,7 @@ query = (query_base
 
 Make sure to use `base_query` here: the `make_a_tool` must have been called on the query first.
 
-For OpenData you'll need a different set of `init_lines` in `make_a_tool` as they represent earlier data:
+For OpenData you'll need a different set of `init_lines` in `make_a_tool` as they represent earlier data (you can tell it is open data by looking at the dataset name):
 
 ```python
     init_lines=[
