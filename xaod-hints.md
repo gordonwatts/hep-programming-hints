@@ -82,7 +82,7 @@ Make sure the `tool_name` is different if you need to define multiple tools (bec
 from func_adl_servicex_xaodr25.xAOD.jet_v1 import Jet_v1
 from xaod_hints import make_a_tool, make_tool_accessor
 
-# Define the tool
+# Define the tool. This passes `init_lines` for Run 3.
 query_base, tag_tool_info = make_a_tool(
     physlite,
     "btag_discriminator",
@@ -126,6 +126,16 @@ query = (query_base
 ```
 
 Make sure to use `base_query` here: the `make_a_tool` must have been called on the query first.
+
+For OpenData you'll need a different set of `init_lines` in `make_a_tool` as they represent earlier data:
+
+```python
+    init_lines=[
+        'ANA_CHECK(asg::setProperty({tool_name}, "OperatingPoint", "FixedCutBEff_77"));',
+        'ANA_CHECK(asg::setProperty({tool_name}, "TaggerName", "DL1dv01"));',
+        'ANA_CHECK(asg::setProperty({tool_name}, "FlvTagCutDefinitionsFileName", "xAODBTaggingEfficiency/13TeV/2022-22-13TeV-MC20-CDI-2022-07-28_v1.root"));',
+        "ANA_CHECK({tool_name}->initialize());",
+    ],```
 
 ## Event and Sample Weights
 
