@@ -90,7 +90,12 @@ query_base, tag_tool_info = make_a_tool(
     include_files=["xAODBTaggingEfficiency/BTaggingSelectionTool.h"],
     init_lines=[
         'ANA_CHECK(asg::setProperty({tool_name}, "OperatingPoint", "FixedCutBEff_77"));',
-        "ANA_CHECK({tool_name}->initialize());",
+        # Uncomment the next 1 lines if you are running on ATLAS Run 2 or 3 Data
+        # "ANA_CHECK({tool_name}->initialize());",
+        # Uncomment the next 3 lines if you are running on ATLAS OpenData
+        # 'ANA_CHECK(asg::setProperty({tool_name}, "TaggerName", "DL1dv01"));',
+        # 'ANA_CHECK(asg::setProperty({tool_name}, "FlvTagCutDefinitionsFileName", "xAODBTaggingEfficiency/13TeV/2022-22-13TeV-MC20-CDI-2022-07-28_v1.root"));',
+        # "ANA_CHECK({tool_name}->initialize());",
     ],
     link_libraries=["xAODBTaggingEfficiencyLib"]
 )
@@ -127,15 +132,8 @@ query = (query_base
 
 Make sure to use `base_query` here: the `make_a_tool` must have been called on the query first.
 
-For OpenData you'll need a different set of `init_lines` in `make_a_tool` as they represent earlier data (you can tell it is open data by looking at the dataset name):
-
-```python
-    init_lines=[
-        'ANA_CHECK(asg::setProperty({tool_name}, "OperatingPoint", "FixedCutBEff_77"));',
-        'ANA_CHECK(asg::setProperty({tool_name}, "TaggerName", "DL1dv01"));',
-        'ANA_CHECK(asg::setProperty({tool_name}, "FlvTagCutDefinitionsFileName", "xAODBTaggingEfficiency/13TeV/2022-22-13TeV-MC20-CDI-2022-07-28_v1.root"));',
-        "ANA_CHECK({tool_name}->initialize());",
-    ],```
+You *must* uncomment one set or the other of the initialization lines in the code! Look for the comment
+about uncommenting the proper code. It won't work otherwise!
 
 ## Event and Sample Weights
 
