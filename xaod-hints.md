@@ -92,13 +92,13 @@ query_base, tag_tool_info = make_a_tool(
         # Use this line no matter open data or ATLAS data
         'ANA_CHECK(asg::setProperty({tool_name}, "OperatingPoint", "FixedCutBEff_77"));',
 
-        # Uncomment the next 1 lines if you are running on ATLAS Run 2 or 3 Data only
-        # "ANA_CHECK({tool_name}->initialize());",
 
         # Uncomment the next 3 lines if you are running on ATLAS OpenData only
         # 'ANA_CHECK(asg::setProperty({tool_name}, "TaggerName", "DL1dv01"));',
         # 'ANA_CHECK(asg::setProperty({tool_name}, "FlvTagCutDefinitionsFileName", "xAODBTaggingEfficiency/13TeV/2022-22-13TeV-MC20-CDI-2022-07-28_v1.root"));',
-        # "ANA_CHECK({tool_name}->initialize());",
+
+        # This line must be run last no matter what type of data you are running on
+        "ANA_CHECK({tool_name}->initialize());",
     ],
     link_libraries=["xAODBTaggingEfficiencyLib"]
 )
