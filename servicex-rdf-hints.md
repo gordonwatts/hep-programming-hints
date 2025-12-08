@@ -1,7 +1,6 @@
 # Loading ServiceX Results into RDF
 
-The `all_jet_pts_delivered` is a dictionary indexed by the `Sample` `Name`. Each entry contains a `GuardList`, a `typing.Sequence` of files that can be turned into a RDF source. Assume
-the ServiceX query result is stored in `all_jet_pts_delivered`, as it in the example above.
+The `all_jet_pts_delivered` is a dictionary indexed by the `Sample` `Name`. Each entry contains a `GuardList`, a `typing.Sequence` of string pathnames for files that can be used on an RDF source, as shown below. If the ServiceX query result is stored in `all_jet_pts_delivered`, as it in the example above, then you can get the first file into RDF as follows:
 
 ```python
 import ROOT
