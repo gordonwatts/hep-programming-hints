@@ -62,6 +62,8 @@ It is often useful to aggregate a sub-list into a single number (mean, max, etc.
 
 Awkward *does not* have a `ak.max` - but the `python` `max` and `min` functions work on awkward arrays.
 
+When using awkward functions, do not pass `None` for the `axis` argument.
+
 ## Sorting
 
 Use **`ak.sort`**. By default `ak.sort(array)` sorts along the last axis (`axis=-1`, i.e. within each sublist). For example:
@@ -139,3 +141,4 @@ From previous mistakes made by LLM's:
 - `ak.fill_like(array, value)` - the value must be a numeric value (like a float or integer), not a string. It will return an array with the same structure as `array`, but with `value` in each occupied position.
 - Python's `abs` works just fine on awkward arrays (there is no `ak.abs`)
 - There is no `ak.take` - use filtering instead.
+- There is no `ak.expand_dims`.
