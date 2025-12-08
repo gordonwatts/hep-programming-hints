@@ -32,3 +32,38 @@ hist = <source>.Histo1D(hist_def, "met", "weight")
 ## Other Notes
 
 * When creating the canvas for the plot, `canvas = ROOT.TCanvas("plot-name")`, it is ok to add a name if you want, but do not add any other arguments (for example, the size). Only default sizes should be used for the canvas.
+
+## 4-Vectors - DeltaR, Invariant Mass, etc
+
+The Phi wrap-around must be carefully accounted for when calculating Delta R. The easiest is to use the built in functions:
+
+```c++
+#include "TVector2.h"
+
+d_phi = TVector2::Phi_mpi_pi(jet1_phi - jet2_phi)
+```
+
+If you are want to do any other 4-vector manipulations then it is best to build a 4-vector"
+
+```c++
+#include "Math/Vector4D.h""
+#include "Math/VectorUtil.h"
+
+v1 = ROOT::Math::PtEtaPhiMVector(jet1_pt, jet1_eta, jet1_phi, jet1_m);
+v2 = ROOT::Math::PtEtaPhiMVector(jet2_pt, jet2_eta, jet2_phi, jet2_m);
+
+dr = ROOT::Math::VectorUtil::DeltaR(v1, v2);
+```
+
+And in RDataFrame you could do:
+
+```cpp
+auto df2 = df
+  .Define("jet1_p4", "ROOT::Math::PtEtaPhiMVector(jet1_pt, jet1_eta, jet1_phi, jet1_m)")
+  .Define("jet2_p4", "ROOT::Math::PtEtaPhiMVector(jet2_pt, jet2_eta, jet2_phi, jet2_m)")
+  .Define("deltaR_j1j2", "ROOT::Math::VectorUtil::DeltaR(jet1_p4, jet2_p4)");
+```
+
+Other 4-vectors constructor's are defined in `Vector4D.h`: `PtEtaPhiMVector`, `PtEtaPhiEVector`, `PtEtaPhiPxPyPzEVector`, `PxPyPzEVector`, `XYZTVector`. Choose whatever makes most sense to solve the problem if you need 4-vectors.
+
+You can add the vectors together, and use `M()` as the invarrient mass: `(v1+v2).M()`
