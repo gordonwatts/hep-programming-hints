@@ -75,7 +75,7 @@ To define the tool you must:
 query = FuncADLQueryPHYSLITE()
 
 
-Make sure the `tool_name` is different if you need to define multiple tools (because user needs more than one operating point)! Name them something reasonable so the code makes sense!
+Make sure the `{tool_name}` is different if you need to define multiple tools (because user needs more than one operating point)! Name them something reasonable so the code makes sense!
 
 ```python
 # Specific for the below code
@@ -85,7 +85,7 @@ from xaod_hints import make_a_tool, make_tool_accessor
 # Define the tool. This passes `init_lines` for Run 3.
 query_base, tag_tool_info = make_a_tool(
     physlite,
-    "btag_discriminator",
+    "{tool_name}",
     "BTaggingSelectionTool",
     include_files=["xAODBTaggingEfficiency/BTaggingSelectionTool.h"],
     init_lines=[
