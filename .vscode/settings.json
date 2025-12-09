@@ -6,6 +6,7 @@
         "FTAG",
         "histogrammed",
         "NNPDF",
+        "numpy",
         "PHYSLITE",
         "rucio",
         "Topo",

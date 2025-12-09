@@ -71,14 +71,7 @@ all_jet_pts_delivered = deliver(
 )
 ```
 
-- `all_jet_pts_delivered` is a dictionary indexed by sample name. It contains a list of `awkward` arrays (in the form of a `GuardList`).
-
-The following code can be used to access the jet pt's from the above example. Note the `jet_pt` for the column name is the same as in the `servicex` query. The jets are an awkward nested array of floats (array of jets in each event).
-
-```python
-jet_pt_fetch = akk_jet_pts_delivered["jet_pt_fetch"]
-jet_pts = jet_pt_fetch.jet_pt
-```
+- `all_jet_pts_delivered` is a dictionary indexed by sample name. It contains a list of paths to ROOT files (in the form of a `GuardList`). For `NFiles=1`, there will be only a single file.
 
 ## The `deliver` function
 

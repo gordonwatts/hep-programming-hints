@@ -67,3 +67,53 @@ auto df2 = df
 Other 4-vectors constructor's are defined in `Vector4D.h`: `PtEtaPhiMVector`, `PtEtaPhiEVector`, `PtEtaPhiPxPyPzEVector`, `PxPyPzEVector`, `XYZTVector`. Choose whatever makes most sense to solve the problem if you need 4-vectors.
 
 You can add the vectors together, and use `M()` as the invarrient mass: `(v1+v2).M()`
+
+## `RVec` and defines
+
+RDF works by passing, as arrays, everything from a single event. When processing with C++, you need to use `RVec` for those arrays (not `vector`!!).
+
+If you put this inside a `Declare` statement as a string, it will be JIT compiled by ROOT.
+
+```cpp
+# include "ROOT/RVec.hxx"
+
+template<typename TF>
+double compute_sum(const ROOT::VecOps::RVec<TF> &a)
+{
+  double sum = 0;
+  for (auto pt : a) {
+    sum += pt;
+  }
+  return sum
+}
+```
+
+And then this will work correctly:
+
+```python
+rdf2 = rdf.Define("sum", "compute_sum(ele_pt)")
+```
+
+## The `Take` method, and AsNumpy
+
+Use `Take` to materialize data into a C++ `vector` or `RVec`. Use `AsNumpy` to materialize a numpy array.
+
+Take in python:
+
+```python
+pts = df.Take["float"]("pt")
+```
+
+ or in C++
+
+```cpp
+auto pts = df.Take<float>("pt")
+```
+
+And `AsNumpy`:
+
+```python
+arrays = df.AsNumpy(columns=['pt', 'eta'])
+```
+
+Which will return a dictionary with `pt` and `eta`, and the value `arrays['pt']` will be a numpy array.
