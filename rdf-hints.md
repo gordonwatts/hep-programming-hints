@@ -72,6 +72,8 @@ You can add the vectors together, and use `M()` as the invarrient mass: `(v1+v2)
 
 RDF works by passing, as arrays, everything from a single event. When processing with C++, you need to use `RVec` for those arrays (not `vector`!!).
 
+In general, when working with RDF, you should never use `std::vector` - use `ROOT::VecOps::RVec` instead. If you are using `vector` it should really be under some specialized situation.
+
 If you put this inside a `Declare` statement as a string, it will be JIT compiled by ROOT.
 
 ```cpp
