@@ -58,33 +58,29 @@ These are defined in the `xaod_hints` module if you need to define special tools
 
 ### BTaggingSelectionTool: getting jet b-tagging results
 
-The `BTaggingSelectionTool` tool to get either a tag weight/discriminant for b-or-charm tagging or to see if a jet is "tagged" for a particular working point (e.g. passed an experiment defined threshold). The working points are provided by the FTAG group in ATLAS.
+You must use the `BTaggingSelectionTool` tool when accessing any b-tagging information in any xAOD file (PHYS, PHYSLITE, etc), open data or ATLAS data/MC. There is no other way to do this properly. Detailed documentation can be found in the [ATLAS FTAG group's documentation](https://ftag.docs.cern.ch/).
 
-Working Point Info:
+* The tag weight or discriminant: use the `tag_weight` example below.
+* To determine if a jet has passed a b-tagging working point, use the `jet_is_tagged` example below. The working points are provided by the FTAG group in ATLAS.
 
-Working points define different b-tagging efficiency and light/charm rejection.
-
-* Working point names: `FixedCutBEff_65`, `FixedCutBEff_70`, `FixedCutBEff_77`, `FixedCutBEff_85`, `FixedCutBEff_90`
-* [Further information for user](https://ftag.docs.cern.ch/recommendations/algs/r22-preliminary/#gn2v01-b-tagging)
-* By default choose the `FixedCutBEff_77` working point.
-* Make sure to let the user know what operating point in your text explanation.
-
-To define the tool you must:
+First step you must do is define the tagging tool. The following code can be directly copied into the source. Read below for the working point information.
 
 ```python
-query = FuncADLQueryPHYSLITE()
+# If you are using PHYSLITE - but you can use anything here.
+base_query = FuncADLQueryPHYSLITE()
 
 
-Make sure the `{tool_name}` is different if you need to define multiple tools (because user needs more than one operating point)! Name them something reasonable so the code makes sense!
+# Make sure the `{tool_name}` is different if you need to define multiple tools
+# (because user needs more than one operating point)!
+# Name them something reasonable so the code makes sense!
 
-```python
 # Specific for the below code
 from func_adl_servicex_xaodr25.xAOD.jet_v1 import Jet_v1
 from xaod_hints import make_a_tool, make_tool_accessor
 
 # Define the tool. This passes `init_lines` for Run 3.
-query_base, tag_tool_info = make_a_tool(
-    physlite,
+query, tag_tool_info = make_a_tool(
+    base_query,
     "{tool_name}",
     "BTaggingSelectionTool",
     include_files=["xAODBTaggingEfficiency/BTaggingSelectionTool.h"],
@@ -92,28 +88,36 @@ query_base, tag_tool_info = make_a_tool(
         # Use this line no matter open data or ATLAS data
         'ANA_CHECK(asg::setProperty({tool_name}, "OperatingPoint", "FixedCutBEff_77"));',
 
-
         # Uncomment the next 3 lines if you are running on ATLAS OpenData only
         # 'ANA_CHECK(asg::setProperty({tool_name}, "TaggerName", "DL1dv01"));',
         # 'ANA_CHECK(asg::setProperty({tool_name}, "FlvTagCutDefinitionsFileName", "xAODBTaggingEfficiency/13TeV/2022-22-13TeV-MC20-CDI-2022-07-28_v1.root"));',
+
+        # THe defaults are good for Run 2 and 3, so there are no lines to
+        # uncomment.
 
         # This line must be run last no matter what type of data you are running on
         "ANA_CHECK({tool_name}->initialize());",
     ],
     link_libraries=["xAODBTaggingEfficiencyLib"]
 )
+```
 
-# If you need the tag weight. Tag weights, output of a GNN, are between -10 and 15.
-tag_weight = make_tool_accessor(
-    tag_tool_info,
-    function_name="tag_weight",
-    # false in next line for b-tagging weight, true for c-tagging weight
-    source_code=["ANA_CHECK({tool_name}->getTaggerWeight(*jet, result, false));"],
-    arguments=[("jet", Jet_v1)],
-    return_type_cpp="double",
-    return_type_python="float",
-)
+Make sure to use `base_query` here: the `make_a_tool` must have been called on the `base_query` first. The selection tool won't be defined unless you build the query on the result from `make_a_tool`. You can now treat `query` as a regular `func_adl` query and start calling it with `Select` and `Where`, etc.
 
+If you are reading open data you *must* uncomment the three lines in the initialization. It won't work otherwise! This is because OpenData (Run 1) uses a different b-tagging algorithm than Run 2 and 3 ATLAS data.
+
+### Is a jet Tagged?
+
+Choose a working point. Working points define different b-tagging efficiency and light/charm rejection.
+
+* Working point names: `FixedCutBEff_65`, `FixedCutBEff_70`, `FixedCutBEff_77`, `FixedCutBEff_85`, `FixedCutBEff_90`
+* [Further information for user](https://ftag.docs.cern.ch/recommendations/algs/r22-preliminary/#gn2v01-b-tagging)
+* By default choose the `FixedCutBEff_77` working point.
+* Make sure to let the user know what operating point in your text explanation. The numbers (like 65%, 70%, etc.) are defined on a $t\bar{t}$ sample.
+
+To define the `jet_is_tagged` function, copy the following code:
+
+```python
 # If you need to know if a jet is tagged or not.
 jet_is_tagged = make_tool_accessor(
     tag_tool_info,
@@ -125,18 +129,37 @@ jet_is_tagged = make_tool_accessor(
     return_type_cpp="bool",
     return_type_python="bool",
 )
+```
 
 Usage of `jet_is_tagged` in `func_adl` is straight forward:
 
 ```python
-query = (query_base
+query = (query
     .Select(lambda e: e.Jets().Select(lambda j: jet_is_tagged(j)))
 ```
 
-Make sure to use `base_query` here: the `make_a_tool` must have been called on the query first.
+### b-tagging Discriminant
 
-You *must* uncomment one set or the other of the initialization lines in the code! Look for the comment
-about uncommenting the proper code. It won't work otherwise!
+The discriminant or weight is defined as `log(pb / (m_tagger.fraction_c *pc + (1. - m_tagger.fraction_c - m_tagger.fraction_tau)* pu + m_tagger.fraction_tau * ptau) );` (see [code](https://gitlab.cern.ch/atlas/athena/-/blob/main/PhysicsAnalysis/JetTagging/JetTagPerformanceCalibration/xAODBTaggingEfficiency/Root/BTaggingSelectionTool.cxx#L404)). The result is a log based number, and between 10 and -15.
+
+```python
+tag_weight = make_tool_accessor(
+    tag_tool_info,
+    function_name="tag_weight",
+    # false in next line for b-tagging weight, true for c-tagging weight
+    source_code=["ANA_CHECK({tool_name}->getTaggerWeight(*jet, result, false));"],
+    arguments=[("jet", Jet_v1)],
+    return_type_cpp="double",
+    return_type_python="float",
+)
+```
+
+Usage of `tag_weight` in `func_adl` is straight forward:
+
+```python
+query = (query
+    .Select(lambda e: e.Jets().Select(lambda j: tag_weight(j)))
+```
 
 ## Event and Sample Weights
 
