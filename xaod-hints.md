@@ -65,7 +65,7 @@ You must use the `BTaggingSelectionTool` tool when accessing any b-tagging infor
 
 Work flow:
 
-1. Determine if you are using Run 1 (OpenData), or Run 2/3 data (or MC).
+1. Determine if you are using Run 2 (OpenData), or Run 3 data (or MC).
 2. You must the tagging tool. The following code can be directly copied into the source. Read below for the working point information. Make sure to uncomment the lines as appropriate if you are accessing OpenData/Run 2.
 
 ```python
@@ -107,7 +107,7 @@ query, tag_tool_info = make_a_tool(
 
 Make sure to use `base_query` here: the `make_a_tool` must have been called on the `base_query` first. The selection tool won't be defined unless you build the query on the result from `make_a_tool`. You can now treat `query` as a regular `func_adl` query and start calling it with `Select` and `Where`, etc.
 
-If you are reading open data you *must* uncomment the three lines in the initialization. It won't work otherwise! This is because OpenData (Run 1) uses a different b-tagging algorithm than Run 2 and 3 ATLAS data.
+If you are reading open data you *must* uncomment the three lines in the initialization. It won't work otherwise! This is because OpenData (Run 2) uses a different b-tagging algorithm than Run 2 and 3 ATLAS data.
 
 ### Is a jet Tagged?
 
