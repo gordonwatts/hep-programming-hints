@@ -96,7 +96,7 @@ To tell what kind of data you are looking at, scan the name of the dataset:
 
 - If it has PHYSLITE in it, it is PHYSLITE.
 - If it has DAOD_PHYS in it, it is PHYS.
-- If it is OpenData, then it is PHYSLITE. It usually has OpenData in the name somewhere. There are a few differences in how you code against OpenData - look carefully at the instructions.
+- If it is OpenData, then it is PHYSLITE. It usually has OpenData in the name somewhere. There are a few differences in how you code against OpenData - follow given instructions carefully.
 
 ## Filtering in a Query
 

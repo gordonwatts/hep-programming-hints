@@ -63,7 +63,10 @@ You must use the `BTaggingSelectionTool` tool when accessing any b-tagging infor
 * The tag weight or discriminant: use the `tag_weight` example below.
 * To determine if a jet has passed a b-tagging working point, use the `jet_is_tagged` example below. The working points are provided by the FTAG group in ATLAS.
 
-First step you must do is define the tagging tool. The following code can be directly copied into the source. Read below for the working point information.
+Work flow:
+
+1. Determine if you are using Run 1 (OpenData), or Run 2/3 data (or MC).
+2. You must the tagging tool. The following code can be directly copied into the source. Read below for the working point information. Make sure to uncomment the lines as appropriate if you are accessing OpenData/Run 1.
 
 ```python
 # If you are using PHYSLITE - but you can use anything here.
@@ -88,7 +91,7 @@ query, tag_tool_info = make_a_tool(
         # Use this line no matter open data or ATLAS data
         'ANA_CHECK(asg::setProperty({tool_name}, "OperatingPoint", "FixedCutBEff_77"));',
 
-        # Uncomment the next 3 lines if you are running on ATLAS OpenData only
+        # Uncomment the next 3 lines if you are running on ATLAS Run 1/OpenData only
         # 'ANA_CHECK(asg::setProperty({tool_name}, "TaggerName", "DL1dv01"));',
         # 'ANA_CHECK(asg::setProperty({tool_name}, "FlvTagCutDefinitionsFileName", "xAODBTaggingEfficiency/13TeV/2022-22-13TeV-MC20-CDI-2022-07-28_v1.root"));',
 
