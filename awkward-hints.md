@@ -60,7 +60,7 @@ It is often useful to aggregate a sub-list into a single number (mean, max, etc.
 - `ak.count` - counts the number of non-empty elements in an axis (remember to add `axis=n`). If the element is empty, it does not count. Useful for counting the number of jets in each event (`ak.count(e.jets, axis=1))`). Returns length per sublist. Counts values.
 - `ak.num` - counts the number of elements. `ak.num(e)` is like `len(e)` - doesn't care of an array entry is empty or not. Returns a number (or nested number). Counts slots.
 
-Awkward *does not* have a `ak.max` - but the `python` `max` and `min` functions work on awkward arrays.
+Awkward *does not* have a `ak.max` or `ak.min` - instead use `np.max` and `np.min` or `python`'s `max` and `min` functions.
 
 When using awkward functions, do not pass `None` for the `axis` argument.
 
