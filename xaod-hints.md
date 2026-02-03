@@ -92,11 +92,12 @@ query, tag_tool_info = make_a_tool(
         'ANA_CHECK(asg::setProperty({tool_name}, "OperatingPoint", "FixedCutBEff_77"));',
 
         # Uncomment the next 3 lines if you are running on ATLAS Run 2/OpenData only
+        # Data: Open Data/Run 2
         # 'ANA_CHECK(asg::setProperty({tool_name}, "TaggerName", "DL1dv01"));',
         # 'ANA_CHECK(asg::setProperty({tool_name}, "FlvTagCutDefinitionsFileName", "xAODBTaggingEfficiency/13TeV/2022-22-13TeV-MC20-CDI-2022-07-28_v1.root"));',
 
-        # THe defaults are good for Run 2 and 3, so there are no lines to
-        # uncomment.
+        # The defaults are good for Run 2 and 3, so only the following comment should be included:
+        # Data: Run 3
 
         # This line must be run last no matter what type of data you are running on
         "ANA_CHECK({tool_name}->initialize());",
@@ -107,7 +108,10 @@ query, tag_tool_info = make_a_tool(
 
 Make sure to use `base_query` here: the `make_a_tool` must have been called on the `base_query` first. The selection tool won't be defined unless you build the query on the result from `make_a_tool`. You can now treat `query` as a regular `func_adl` query and start calling it with `Select` and `Where`, etc.
 
-If you are reading open data you *must* uncomment the three lines in the initialization. It won't work otherwise! This is because OpenData (Run 2) uses a different b-tagging algorithm than Run 2 and 3 ATLAS data.
+If you are reading open data you *must* uncomment the three lines in the initialization. It won't work otherwise! This is because OpenData (Run 2) uses a different b-tagging algorithm than Run 2 and 3 ATLAS data. Keep a comment which says what decision you need. That way you can inspect it when there is a failure to see if the right initialization lines were included for open data/run 2 or run 3 data.
+
+* If you get the initialization error wrong, you'll get a failure from the servicex query that returns no files, but no error message.
+* If you see that error, and you are using the b-tagging tool, double check you used the right initialization lines for the type of data you are running. If you need b-tagging you have to make this work!
 
 ### Is a jet Tagged?
 

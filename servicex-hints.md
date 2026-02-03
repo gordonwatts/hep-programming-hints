@@ -137,6 +137,9 @@ Note:
 
 ## Errors
 
-If you encounter an error after running, there are two types. The first give you type errors, and those you can solve just by reading the error message carefully and perhaps not doing whatever the code complained about. You might have to look carefully for this message - for example "Method <xx> not found on object."
+If you encounter an error after running, there are two types.
 
-The second type of error there isn't much you can do to get more information, however. You'll find an error that looks like "Transform "xxx" completed with failures." And something in `stdout` about clicking on `HERE` to get more information. Sadly, only the requester can do that. If that happens just reply with "HELP USER" and that will be a signal. Note that you might get an error as mentioned above and this - in which case try to solve the error before getting the user involved. A common case here is you request some data that should be in the datafiles, but is not.
+1. Type errors: For example `Method pt not found on object <class 'func_adl_servicex_xaodr25.tlorentzvector.TLorentzVector'>`. These can be solved by reading this message carefully and fixing it.
+2. Access error: For example 'Transform "xxx" completed with failures." This is almost always caused by your query trying to access a bit of data in the file that does not exist. For example, trying to access the run 3 b-tagging information in a run 2 file.
+
+If the user specified a dataset, then you must make the query work on that dataset. You can not change datasets.
